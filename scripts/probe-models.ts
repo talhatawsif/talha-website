@@ -10,10 +10,18 @@ if (!key) throw new Error("Set OPENROUTER_API_KEY in .env.local (run with: node 
 
 type M = { id: string; context_length?: number; pricing?: Record<string, string> };
 const list = ((await (await fetch("https://openrouter.ai/api/v1/models")).json()) as { data: M[] }).data;
+// Prefer mainstream instruction-tuned models; skip previews, code, reasoning-only, vision and tiny ones.
+const skip = /preview|code|reasoning|omni|-vl\b|thinking|\b\d(\.\d)?b\b/i;
+const score = (id: string) => (/-it\b|instruct/i.test(id) ? 2 : 0) + (/^(google|meta-llama|qwen|mistralai|openai)\//.test(id) ? 1 : 0);
 const candidates = list
-  .filter((m) => m.id.endsWith(":free") && Object.values(m.pricing ?? {}).every((p) => Number(p) === 0))
-  .sort((a, b) => (b.context_length ?? 0) - (a.context_length ?? 0))
+  .filter((m) => m.id.endsWith(":free") && Object.values(m.pricing ?? {}).every((p) => Number(p) === 0) && !skip.test(m.id))
+  .sort((a, b) => score(b.id) - score(a.id) || (b.context_length ?? 0) - (a.context_length ?? 0))
   .slice(0, 2);
+
+if (process.argv.includes("--dry")) {
+  console.log("Would test:", candidates.map((m) => m.id).join(", "));
+  process.exit(0);
+}
 
 const passed: string[] = [];
 for (const m of candidates) {
@@ -24,6 +32,7 @@ for (const m of candidates) {
     body: JSON.stringify({
       model: m.id,
       max_tokens: 300,
+      reasoning: { enabled: false },
       messages: [
         { role: "system", content: `Answer only from the content, in at most 4 sentences, ending each sentence with a citation like [projects.cliniq]. Otherwise reply: ${NOT_ON_SITE}\n\n${buildContext()}` },
         { role: "user", content: "What is ClinIQ?" },
@@ -32,7 +41,7 @@ for (const m of candidates) {
     signal: AbortSignal.timeout(8000),
   }).catch(() => null);
   const out = res?.ok ? filterCited(((await res.json().catch(() => ({}))) as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? "", validIds) : null;
-  console.log(m.id, out && out.citations.length ? "pass" : "fail");
+  console.log(m.id, out && out.citations.length ? "pass" : `fail (${res ? `HTTP ${res.status}, no valid citation` : "timeout or network error"})`);
   if (out && out.citations.length) passed.push(m.id);
 }
 writeFileSync(new URL("../src/content/models.json", import.meta.url), JSON.stringify({ models: passed }, null, 2) + "\n");

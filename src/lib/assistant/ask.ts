@@ -46,6 +46,7 @@ async function callModel(model: string, question: string, key: string, f: typeof
       model,
       max_tokens: 300,
       temperature: 0.2,
+      reasoning: { enabled: false }, // reasoning tokens would eat the 300-token budget and leave an empty answer
       messages: [
         { role: "system", content: `${SYSTEM}\n\nSITE CONTENT\n${buildContext()}` },
         { role: "user", content: question },
