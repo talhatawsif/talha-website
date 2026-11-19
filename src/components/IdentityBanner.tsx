@@ -1,14 +1,14 @@
 import Image from "next/image";
-import { Mail } from "lucide-react";
 import { profile } from "@/content/site";
 import { buildPractitioner } from "@/lib/fhir";
 import { FhirDrawer } from "./FhirDrawer";
 import { InstitutionLogo } from "./InstitutionLogo";
-import { LinkButton } from "./Button";
+import { ContactButtons } from "./ContactButtons";
 
 const facts = [
   ["Location", profile.location],
   ["Email", profile.email],
+  ["Phone", profile.phone],
   ["Studying", profile.studying],
   ["Available", profile.available],
   ["Languages", profile.languages],
@@ -26,24 +26,19 @@ export function IdentityBanner() {
             <FhirDrawer json={JSON.stringify(buildPractitioner(), null, 2)} />
           </div>
           <p className="text-text-muted">{profile.role}</p>
-          <dl className="mt-3 grid gap-x-6 gap-y-2 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-[auto_auto_auto]">
+          <dl className="mt-3 grid gap-x-6 gap-y-2 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-[auto_auto_auto_auto]">
             {facts.map(([label, value]) => (
               <div key={label}>
                 <dt className="text-xs text-text-muted">{label}</dt>
                 <dd className="flex items-center gap-2 text-[14px]">
                   {label === "Studying" && <InstitutionLogo id={profile.studyingInstitution} />}
-                  {label === "Email" ? <a href={`mailto:${value}`}>{value}</a> : <span>{value}</span>}
+                  {label === "Email" ? <a href={`mailto:${value}`}>{value}</a> : label === "Phone" ? <a href={`tel:${value}`}>{value.replace(/^(\+61)(\d{3})(\d{3})(\d{3})$/, "$1 $2 $3 $4")}</a> : <span>{value}</span>}
                 </dd>
               </div>
             ))}
           </dl>
           <div className="mt-3 flex flex-wrap gap-2">
-            <LinkButton href={profile.linkedin}>LinkedIn</LinkButton>
-            <LinkButton href={profile.github}>GitHub</LinkButton>
-            <LinkButton href={`mailto:${profile.email}`}>
-              <Mail size={16} strokeWidth={1.5} aria-hidden="true" />
-              Email
-            </LinkButton>
+            <ContactButtons />
           </div>
         </div>
       </div>

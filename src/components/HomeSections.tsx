@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
-import { Download, Mail } from "lucide-react";
-import { atAGlance, certifications, claudeNote, contact, education, experience, profile, projects, skills, summary } from "@/content/site";
+import { atAGlance, certifications, claudeNote, contact, education, experience, projects, skills, summary } from "@/content/site";
 import { LinkButton } from "./Button";
+import { ContactButtons } from "./ContactButtons";
 import { DataTable } from "./DataTable";
 import { InstitutionLogo } from "./InstitutionLogo";
 import { TranscriptDialog } from "./TranscriptDialog";
@@ -136,10 +136,7 @@ export function ContactSection() {
     <Section id="contact" title="Contact">
       <p className="max-w-[72ch]">{contact.text}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <LinkButton href={profile.linkedin}>LinkedIn</LinkButton>
-        <LinkButton href={profile.github}>GitHub</LinkButton>
-        <LinkButton href={`mailto:${profile.email}`}><Mail size={16} strokeWidth={1.5} aria-hidden="true" />Email</LinkButton>
-                  <LinkButton href={profile.cvUrl} variant="primary" download><Download size={16} strokeWidth={1.5} aria-hidden="true" />Download CV</LinkButton>
+        <ContactButtons cv />
       </div>
     </Section>
   );

@@ -11,6 +11,7 @@ export function buildPractitioner() {
     name: [{ use: "official", text: profile.name, family, given: parts.slice(0, -1) }],
     telecom: [
       { system: "email", value: profile.email },
+      { system: "phone", value: profile.phone },
       { system: "url", value: profile.linkedin },
       { system: "url", value: profile.github },
     ],

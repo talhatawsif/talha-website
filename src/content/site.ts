@@ -58,6 +58,8 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/talha-tawsif",
   github: "https://github.com/talhatawsif",
   email: "talhatawsif.dev@gmail.com",
+  /** International format, used for tel: links. Shown with spaces; kept off the CV by design. */
+  phone: "+61499390833",
   cvUrl: "/cv.pdf",
   photo: "/talha.jpg",
 };

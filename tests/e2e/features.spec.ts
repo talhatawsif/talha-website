@@ -145,3 +145,23 @@ test("banner shows the full location and the email as selectable text", async ({
   const email = banner.locator("dd a[href^='mailto:']");
   await expect(email).toHaveText("talhatawsif.dev@gmail.com");
 });
+
+test("banner shows the phone as text and contact buttons each have a logo", async ({ page }) => {
+  await page.goto("/");
+  const banner = page.getByRole("region", { name: "Identity" });
+  await expect(banner.locator("dd a[href='tel:+61499390833']")).toHaveText("+61 499 390 833");
+  for (const [name, href] of [["LinkedIn", "https://www.linkedin.com/in/talha-tawsif"], ["GitHub", "https://github.com/talhatawsif"], ["Email", "mailto:talhatawsif.dev@gmail.com"], ["Call me", "tel:+61499390833"]]) {
+    const link = banner.getByRole("link", { name, exact: true });
+    await expect(link).toHaveAttribute("href", href);
+    await expect(link.locator("svg[aria-hidden='true']")).toHaveCount(1);
+  }
+  await expect(page.locator("#contact").getByRole("link", { name: "Call me" })).toHaveAttribute("href", "tel:+61499390833");
+});
+
+test("the CV never carries the phone number", async ({ request }) => {
+  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const doc = await getDocument({ data: new Uint8Array(await (await request.get("/cv.pdf")).body()), useSystemFonts: true }).promise;
+  let text = "";
+  for (let i = 1; i <= doc.numPages; i++) text += (await (await doc.getPage(i)).getTextContent()).items.map((it) => ("str" in it ? it.str : "")).join(" ");
+  expect(text).not.toMatch(/499\s?390\s?833/);
+});
