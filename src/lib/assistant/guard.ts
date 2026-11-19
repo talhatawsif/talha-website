@@ -1,6 +1,10 @@
-/** Only OpenRouter model ids ending in `:free` may ever be requested. */
+// OpenRouter's free-models router has no ":free" suffix but is priced at zero. It is the only exception;
+// the breaker in ask.ts still trips if the model that actually answers does not end in ":free".
+const FREE_ROUTER = "openrouter/free";
+
+/** Only OpenRouter model ids ending in `:free` (plus the free router) may ever be requested. */
 export function assertFree(model: string): void {
-  if (!model.endsWith(":free")) throw new Error(`Refusing non-free model id: ${model}`);
+  if (model !== FREE_ROUTER && !model.endsWith(":free")) throw new Error(`Refusing non-free model id: ${model}`);
 }
 
 export const NOT_ON_SITE = "That isn't on my site yet. Please email me.";

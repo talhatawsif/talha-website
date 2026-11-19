@@ -13,6 +13,8 @@ describe("free-only guard", () => {
   it("throws for a model id without :free", () => {
     expect(() => assertFree("openai/gpt-4o")).toThrow();
     expect(() => assertFree("meta/llama:free")).not.toThrow();
+    expect(() => assertFree("openrouter/free")).not.toThrow();
+    expect(() => assertFree("openrouter/auto")).toThrow();
   });
   it("throws before any network request", async () => {
     const f = vi.fn();
