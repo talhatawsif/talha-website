@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Public_Sans } from "next/font/google";
+import { Footer } from "@/components/Footer";
+import { TopBar } from "@/components/TopBar";
 import "./globals.css";
 
 const sans = Public_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-public-sans", display: "swap" });
@@ -15,7 +17,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
         <a href="#main" className="skip-link">Skip to content</a>
+        <TopBar />
         {children}
+        <Footer />
       </body>
     </html>
   );

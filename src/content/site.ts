@@ -34,11 +34,11 @@ export type InstitutionId = "kent" | "swinburne" | "bracu" | "stanford";
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "[TODO: domain]";
 
-export const institutions: Record<InstitutionId, { name: string; initials: string; logo?: string }> = {
-  kent: { name: "Kent Institute Australia", initials: "KI", logo: "/logos/kent.svg" },
-  swinburne: { name: "Swinburne University of Technology", initials: "SU", logo: "/logos/swinburne.svg" },
-  bracu: { name: "BRAC University", initials: "BU", logo: "/logos/bracu.svg" },
-  stanford: { name: "Stanford University School of Medicine", initials: "SM", logo: "/logos/stanford.svg" },
+export const institutions: Record<InstitutionId, { name: string; initials: string; logo?: string; ratio?: number }> = {
+  kent: { name: "Kent Institute Australia", initials: "KI" },
+  swinburne: { name: "Swinburne University of Technology", initials: "SU", logo: "/logos/swinburne.svg", ratio: 500 / 252.84 },
+  bracu: { name: "BRAC University", initials: "BU" },
+  stanford: { name: "Stanford University School of Medicine", initials: "SM", logo: "/logos/stanford.jpg", ratio: 2400 / 778 },
 };
 
 export const profile = {
