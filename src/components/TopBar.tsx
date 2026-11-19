@@ -12,14 +12,14 @@ export const navItems = [
   ["Contact", "/#contact"],
 ] as const;
 
-const linkCls = "rounded-sm px-2 py-1 text-sm text-text no-underline hover:bg-sunken";
+const linkCls = "inline-block rounded-sm px-2 py-1 text-sm text-text no-underline hover:bg-sunken";
 
 export function TopBar() {
   const cv = hasCv();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface">
       <div className="mx-auto flex h-12 max-w-page items-center justify-between gap-3 px-4 md:px-6">
-        <Link href="/" className="font-semibold text-text no-underline">{profile.name}</Link>
+        <Link href="/" className="inline-block py-1 font-semibold text-text no-underline">{profile.name}</Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {navItems.map(([label, href]) => (
             <a key={href} href={href} className={linkCls}>{label}</a>
