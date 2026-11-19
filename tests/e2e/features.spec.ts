@@ -57,7 +57,14 @@ test("scroll-spy marks the section in view and updates the hash", async ({ page 
 });
 
 test("ask panel shows the direct-email fallback when the assistant is unavailable", async ({ page }) => {
+  await page.route("**/api/ask", (r) => r.fulfill({ json: { available: false, resting: false } }));
   await page.goto("/");
   await expect(page.locator("#ask").getByText("Ask me directly")).toBeVisible();
   await expect(page.locator("#ask")).toContainText("Answers come from this site only");
+});
+
+test("ask panel shows the question box when the assistant is available", async ({ page }) => {
+  await page.route("**/api/ask", (r) => r.request().method() === "GET" ? r.fulfill({ json: { available: true, resting: false } }) : r.continue());
+  await page.goto("/");
+  await expect(page.getByLabel("Your question")).toBeVisible();
 });
