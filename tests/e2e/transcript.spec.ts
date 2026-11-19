@@ -18,6 +18,7 @@ test("transcript dialog opens and closes by keyboard, image loads, axe clean", a
   await expect(dialog.getByRole("link", { name: /Open PDF/ })).toHaveAttribute("href", "/credentials/stanford-transcript.pdf");
   await expect(dialog.getByRole("link", { name: /Open PDF/ })).toHaveAttribute("target", "_blank");
 
+  await page.waitForFunction(() => document.getAnimations().length === 0);
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag22aa"]).analyze();
   expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
 

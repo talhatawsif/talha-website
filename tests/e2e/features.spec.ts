@@ -87,3 +87,53 @@ test("ask panel shows the question box when the assistant is available", async (
   await page.goto("/");
   await expect(page.getByLabel("Your question")).toBeVisible();
 });
+
+test("case studies hide Demo and Screenshots while there is nothing to show", async ({ page }) => {
+  for (const slug of ["cliniq", "pawlift", "adhd-buddy"]) {
+    await page.goto(`/projects/${slug}`);
+    await expect(page.getByRole("heading", { name: "Demo", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Screenshots" })).toHaveCount(0);
+    await expect(page.getByText("coming soon")).toHaveCount(0);
+  }
+});
+
+for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+  test(`HL7 explainer wraps long lines without clipping or scrolling at ${vp.width}px`, async ({ page }) => {
+    await page.setViewportSize(vp);
+    await page.goto("/projects/cliniq");
+    const clipped = await page.locator("section[aria-labelledby=explainer-h]").evaluate((root) =>
+      [...root.querySelectorAll("button, pre, span")].filter((el) => el.scrollWidth > el.clientWidth + 1).length,
+    );
+    expect(clipped).toBe(0);
+    await page.getByRole("button", { name: /^OBX\|/ }).focus();
+    await expect(page.locator("#hl7-caption")).toContainText("OBX is the result itself");
+  });
+}
+
+test("phone project rows use a small logo tile instead of the 16:9 thumbnail", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const row = page.locator("#projects li").first();
+  const tile = row.locator("div.h-14.w-14");
+  await expect(tile).toBeVisible();
+  expect((await tile.boundingBox())!.width).toBe(56);
+  await expect(row.locator("a.hidden")).toBeHidden();
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(tile).toBeHidden();
+  const thumb = await row.locator("a[aria-label$='case study'] > div").boundingBox();
+  expect(Math.round(thumb!.width / thumb!.height * 100)).toBe(178);
+});
+
+test("sections are never invisible: hash targets and in-view sections are shown at once", async ({ page }) => {
+  await page.goto("/#education");
+  await expect(page.locator("#education")).toHaveCSS("opacity", "1");
+  await page.evaluate(() => { location.hash = "#contact"; });
+  await expect(page.locator("#contact")).toHaveCSS("opacity", "1");
+  await page.goto("/");
+  await expect(page.locator("#summary")).toHaveCSS("opacity", "1");
+  // After scrolling through the whole page every section is visible.
+  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 300) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } });
+  await page.waitForFunction(() => document.getAnimations().length === 0);
+  const hidden = await page.$$eval(".reveal", (els) => els.filter((el) => getComputedStyle(el).opacity !== "1").length);
+  expect(hidden).toBe(0);
+});

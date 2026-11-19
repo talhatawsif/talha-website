@@ -28,18 +28,16 @@ const Bullets = ({ items }: { items: string[] }) => (
   </ul>
 );
 
-function Demo({ p }: { p: Project }) {
-  const v = p.videoUrl;
-  const yt = v?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/)?.[1];
+function Demo({ p, v }: { p: Project; v: string }) {
+  const yt = v.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/)?.[1];
   if (yt)
     return <iframe className="aspect-video w-full rounded-sm border border-border" src={`https://www.youtube-nocookie.com/embed/${yt}`} title={`${p.name} demo video`} allowFullScreen loading="lazy" />;
-  if (v) return <video controls preload="metadata" className="aspect-video w-full rounded-sm border border-border" src={v} poster={p.thumbnail} />;
-  return <div className="flex aspect-video w-full items-center justify-center rounded-sm border border-dashed border-border-strong bg-sunken text-text-muted">Demo video coming soon</div>;
+  return <video controls preload="metadata" className="aspect-video w-full rounded-sm border border-border" src={v} poster={p.thumbnail} />;
 }
 
 export function CaseStudy({ project: p }: { project: Project }) {
   const c = p.caseStudy;
-  const shots = c.screenshots.filter((s) => s.src || showTodos); // unfilled placeholders are development-only
+  const shots = c.screenshots.filter((s) => s.src); // no placeholders: the section appears once real screenshots exist
   const i = projects.findIndex((x) => x.slug === p.slug);
   const prev = projects[(i + projects.length - 1) % projects.length];
   const next = projects[(i + 1) % projects.length];
@@ -65,7 +63,7 @@ export function CaseStudy({ project: p }: { project: Project }) {
       </header>
 
       <P id="problem" title="The problem"><p className="max-w-[72ch]">{c.problem}</p></P>
-      <P id="demo" title="Demo"><Demo p={p} /></P>
+      {p.videoUrl && <P id="demo" title="Demo"><Demo p={p} v={p.videoUrl} /></P>}
       {p.slug === "cliniq" && <P id="explainer" title="From HL7 v2 to FHIR"><Hl7Explainer /></P>}
       <P id="features" title="What it does"><Bullets items={c.features} /></P>
       <P id="built" title="How it's built">
@@ -90,11 +88,7 @@ export function CaseStudy({ project: p }: { project: Project }) {
         <ul className="grid gap-4 md:grid-cols-2">
           {shots.map((s, i) => (
             <li key={i}>
-              {s.src ? (
-                <Image src={s.src} alt={s.alt ?? `${p.name} screenshot ${i + 1}`} width={1280} height={800} sizes="(min-width: 768px) 500px, 100vw" className="h-auto w-full rounded-sm border border-border" />
-              ) : (
-                <div className="flex aspect-video items-center justify-center rounded-sm border border-dashed border-border-strong bg-sunken text-sm text-text-muted">[TODO: screenshot]</div>
-              )}
+              <Image src={s.src!} alt={s.alt ?? `${p.name} screenshot ${i + 1}`} width={1280} height={800} sizes="(min-width: 768px) 500px, 100vw" className="h-auto w-full rounded-sm border border-border" />
               {s.caption && <p className="mt-1 text-sm text-text-muted">{s.caption}</p>}
             </li>
           ))}

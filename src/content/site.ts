@@ -38,11 +38,11 @@ export type InstitutionId = "kent" | "swinburne" | "bracu" | "stanford";
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "[TODO: domain]";
 
-export const institutions: Record<InstitutionId, { name: string; initials: string; logo?: string; ratio?: number }> = {
-  kent: { name: "Kent Institute Australia", initials: "KI" },
-  swinburne: { name: "Swinburne University of Technology", initials: "SU", logo: "/logos/swinburne.svg", ratio: 500 / 252.84 },
-  bracu: { name: "BRAC University", initials: "BU" },
-  stanford: { name: "Stanford University School of Medicine", initials: "SM", logo: "/logos/stanford.jpg", ratio: 2400 / 778 },
+export const institutions: Record<InstitutionId, { name: string; short: string; initials: string; logo?: string; ratio?: number }> = {
+  kent: { name: "Kent Institute Australia", short: "Kent Institute Australia", initials: "KI", logo: "/logos/kent.png", ratio: 300 / 157 },
+  swinburne: { name: "Swinburne University of Technology", short: "Swinburne", initials: "SU", logo: "/logos/swinburne.svg", ratio: 500 / 252.84 },
+  bracu: { name: "BRAC University", short: "BRAC University", initials: "BU" },
+  stanford: { name: "Stanford University School of Medicine", short: "Stanford Medicine", initials: "SM", logo: "/logos/stanford.jpg", ratio: 2400 / 778 },
 };
 
 export const languageCodes = [["en", "English"], ["bn", "Bengali"], ["hi", "Hindi"], ["ur", "Urdu"]] as const;
@@ -325,6 +325,10 @@ export const education: {
   institutionLabel: string;
   start: string;
   end?: string;
+  /** Expected finish, for a degree in progress. */
+  expectedEnd?: string;
+  /** Field of study, in lower case, for the assistant's sentences. */
+  field?: string;
   notes: string;
 }[] = [
   {
@@ -333,6 +337,7 @@ export const education: {
     institution: "kent",
     institutionLabel: "Kent Institute Australia, Melbourne",
     start: "2025-03",
+    expectedEnd: "2027-06",
     notes:
       "Software Engineering, Systems Analysis & Design, Database Fundamentals, Object-Oriented Design and Programming, Web Page Design and Development, Data Communication and Networking, Cloud and Beyond, Data Structures & Algorithms. Capstone project in Trimester 1 2027.",
   },
@@ -343,6 +348,7 @@ export const education: {
     institutionLabel: "Swinburne University of Technology",
     start: "2022",
     end: "2024",
+    field: "biomedical engineering",
     notes:
       "Medical Imaging Systems, Anatomy & Physiology, Engineering Materials, Circuits & Electronics, Calculus, Linear Algebra, Mathematical Methods & Statistics, Introduction to Programming.",
   },
@@ -353,6 +359,7 @@ export const education: {
     institutionLabel: "BRAC University, Dhaka",
     start: "2021",
     end: "2022",
+    field: "electrical and electronic engineering",
     notes: "First-year foundations in mathematics, physics, electrical circuits and programming, including Electrical Circuits I with laboratory (EEE101) and Computer Programming (EEE103).",
   },
 ];

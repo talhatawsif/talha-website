@@ -43,7 +43,7 @@ export function Hl7Explainer() {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div>
           <h3 className="mb-1 text-sm font-medium">HL7 v2 ORU^R01 (synthetic sample)</h3>
-          <div className="overflow-x-auto rounded-sm border border-border bg-sunken p-2 font-mono text-xs">
+          <div className="rounded-sm border border-border bg-sunken p-2 font-mono text-xs">
             {hl7.map(([seg, line]) => (
               <button
                 key={seg}
@@ -53,7 +53,7 @@ export function Hl7Explainer() {
                 onFocus={() => setActive(seg)}
                 onBlur={() => setActive(null)}
                 aria-describedby="hl7-caption"
-                className={`block w-full whitespace-pre rounded-sm px-1.5 py-1 text-left transition-opacity duration-150 ${active && active !== seg ? "opacity-50" : ""} ${active === seg ? "bg-surface outline outline-1 outline-accent" : ""}`}
+                className={`block w-full whitespace-pre-wrap [overflow-wrap:anywhere] rounded-sm px-1.5 py-1 text-left transition-opacity duration-150 ${active && active !== seg ? "opacity-50" : ""} ${active === seg ? "bg-surface outline outline-1 outline-accent" : ""}`}
               >
                 {line}
               </button>
@@ -62,11 +62,11 @@ export function Hl7Explainer() {
         </div>
         <div>
           <h3 className="mb-1 text-sm font-medium">FHIR R4 Observation</h3>
-          <pre tabIndex={0} className="overflow-x-auto rounded-sm border border-border bg-sunken p-2 font-mono text-xs" aria-label="FHIR Observation">
+          <pre className="whitespace-pre-wrap rounded-sm border border-border bg-sunken p-2 font-mono text-xs [overflow-wrap:anywhere]" aria-label="FHIR Observation">
             {fhir.map(([line, segs], i) => {
               const on = active && segs.includes(active);
               return (
-                <span key={i} className={`block whitespace-pre border-l-2 pl-1.5 transition-opacity duration-150 ${on ? "border-accent" : "border-transparent"} ${active && !on ? "opacity-40" : ""}`}>
+                <span key={i} className={`block whitespace-pre-wrap border-l-2 pl-1.5 transition-opacity duration-150 ${on ? "border-accent" : "border-transparent"} ${active && !on ? "opacity-40" : ""}`}>
                   {line}
                 </span>
               );

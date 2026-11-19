@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { Download, Mail } from "lucide-react";
@@ -37,13 +38,18 @@ export function ProjectsSection() {
       <ul className="divide-y divide-border border-y border-border">
         {projects.map((p) => (
           <li key={p.slug} className="grid gap-4 py-4 md:grid-cols-[240px_1fr]">
-            <Link href={`/projects/${p.slug}`} aria-label={`${p.name} case study`} tabIndex={-1} className="print:hidden">
+            <Link href={`/projects/${p.slug}`} aria-label={`${p.name} case study`} tabIndex={-1} className="hidden md:block print:hidden">
               <ProjectThumb project={p} />
             </Link>
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <ViewTransition name={`title-${p.slug}`} share="morph" default="none"><h3 className="text-base font-semibold">{p.name}</h3></ViewTransition>
-                <ProjectStatus slug={p.slug} />
+              <div className="flex items-center gap-3">
+                <div aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-sm md:hidden print:hidden" style={{ backgroundColor: p.color }}>
+                  <Image src={p.mark} alt="" width={32} height={32} className="h-8 w-8" />
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <ViewTransition name={`title-${p.slug}`} share="morph" default="none"><h3 className="text-base font-semibold">{p.name}</h3></ViewTransition>
+                  <ProjectStatus slug={p.slug} />
+                </div>
               </div>
               <p className="text-sm text-text-muted">{p.tagline}</p>
               <p className="mt-1">{p.summary}</p>

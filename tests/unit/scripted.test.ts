@@ -61,15 +61,30 @@ describe("scripted answers: content", () => {
     for (const m of a.text.matchAll(/\[([a-z][a-z0-9.-]*)\]/g)) expect(validIds.has(m[1])).toBe(true);
   });
 
-  it("is built from site.ts", () => {
-    expect(scriptedAnswer("What is PawLift?")!.text).toContain(projects[1].summary.replace(/\.$/, ""));
-    expect(scriptedAnswer("What is PawLift?")!.citations).toEqual(["projects.pawlift"]);
-    expect(scriptedAnswer("education")!.text).toContain(profile.studying);
-    expect(scriptedAnswer("education")!.text).toContain(education[1].institutionLabel);
-    expect(scriptedAnswer("skills")!.text).toContain(atAGlance[0].value);
-    expect(scriptedAnswer("jobs")!.text).toContain(experience[0].role);
-    expect(scriptedAnswer("availability")!.text).toContain("Graduate roles from Jul 2027");
-    expect(scriptedAnswer("contact")!.text).toContain(profile.email);
+  it("education reads as natural sentences built from site.ts", () => {
+    expect(scriptedAnswer("education")!.text).toBe(
+      "Talha is in the final year of a Bachelor of Information Technology at Kent Institute Australia, finishing in June 2027 [education]. " +
+        "Before IT he studied biomedical engineering at Swinburne (2022–2024) and completed the first year of electrical and electronic engineering at BRAC University [education]. " +
+        "He also holds Stanford Medicine's AI in Healthcare Specialisation [certifications].",
+    );
+  });
+
+  it("every intent is natural prose built from site.ts values", () => {
+    const t = (q: string) => scriptedAnswer(q)!.text;
+    expect(t("What is PawLift?")).toContain(`It works as ${projects[1].summary.charAt(0).toLowerCase()}${projects[1].summary.slice(1).replace(/\.$/, "")}`);
+    expect(t("What is PawLift?")).toContain("It is built with Next.js, TypeScript, Supabase, PostgreSQL, PostGIS, MapLibre and Playwright [projects.pawlift].");
+    expect(t("What is PawLift?")).toContain(`There is a live demo at ${projects[1].liveUrl} [projects.pawlift].`);
+    expect(t("what has he built").startsWith("Talha has built three full-stack apps: ClinIQ, PawLift and ADHD Buddy [summary].")).toBe(true);
+    expect(t("skills")).toContain(`Talha works in health IT, with FHIR R4, HL7 v2, SNOMED CT-AU, AU Core, SMART on FHIR and CDS Hooks [skills].`);
+    expect(t("FHIR experience")).toContain("mainly through ClinIQ, a demo electronic health record");
+    expect(t("FHIR experience")).toContain("Its AU Core 2.0.0 validation found 0 errors (20 synthetic patients) [projects.cliniq].");
+    expect(t("work experience")).toContain(`He currently works as an ${experience[0].role},`);
+    expect(t("work experience")).toContain("Earlier, from Feb 2022 to 2024, he worked as a Hospitality Team Member");
+    expect(t("availability")).toContain("Talha is available for part-time and internships now, with graduate roles from Jul 2027 [profile].");
+    expect(t("contact")).toContain(`You can email Talha at ${profile.email} [contact].`);
+    expect(t("contact")).toContain(`His CV is on this site at ${profile.cvUrl} [contact].`);
+    expect(t("education")).toContain(education[1].qualification.length ? "Swinburne (2022–2024)" : "");
+    expect(atAGlance.length).toBe(4);
   });
 
   it.each(projects.map((p) => [p.name, p.kind, p.slug]))("%s answer opens with a full sentence", (name, kind, slug) => {
@@ -82,6 +97,6 @@ describe("scripted answers: content", () => {
   });
 
   it("answers about all three projects when asked what he built", () => {
-    expect(scriptedAnswer("what has he built")!.citations).toEqual(["projects.cliniq", "projects.pawlift", "projects.adhd-buddy"]);
+    expect(scriptedAnswer("what has he built")!.citations).toEqual(["summary", "projects.cliniq", "projects.pawlift", "projects.adhd-buddy"]);
   });
 });
