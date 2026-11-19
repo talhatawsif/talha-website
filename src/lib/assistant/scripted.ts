@@ -41,13 +41,13 @@ export function scriptedAnswer(question: string): Scripted | null {
     const p = named[0];
     const id = `projects.${p.slug}`;
     return pack("project", [
-      [`${p.name}: ${p.tagline}`, id],
+      [`${p.name} is ${p.kind}`, id],
       [p.summary, id],
       [`It is built with ${p.caseStudy.stackLine.split(" · ").join(", ")}`, id],
     ]);
   }
   if (named.length > 1 || has(q, /\b(projects?|portfolio|apps?|built|build|made|created)\b/))
-    return pack("projects", (named.length > 1 ? named : projects).map((p) => [`${p.name}: ${p.tagline}`, `projects.${p.slug}`] as [string, string]));
+    return pack("projects", (named.length > 1 ? named : projects).map((p) => [`${p.name} is ${p.kind}`, `projects.${p.slug}`] as [string, string]));
 
   if (has(q, /\b(fhir|hl7|snomed|au core|cds hooks|interoperability)\b/)) {
     const cliniq = projects[0];

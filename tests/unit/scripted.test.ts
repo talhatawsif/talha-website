@@ -72,6 +72,15 @@ describe("scripted answers: content", () => {
     expect(scriptedAnswer("contact")!.text).toContain(profile.email);
   });
 
+  it.each(projects.map((p) => [p.name, p.kind, p.slug]))("%s answer opens with a full sentence", (name, kind, slug) => {
+    const text = scriptedAnswer(`What is ${name}?`)!.text;
+    expect(text.startsWith(`${name} is ${kind} [projects.${slug}].`)).toBe(true);
+  });
+
+  it("PawLift opens with its sentence", () => {
+    expect(scriptedAnswer("What is PawLift?")!.text.startsWith("PawLift is a rescue animal transport coordination app [projects.pawlift].")).toBe(true);
+  });
+
   it("answers about all three projects when asked what he built", () => {
     expect(scriptedAnswer("what has he built")!.citations).toEqual(["projects.cliniq", "projects.pawlift", "projects.adhd-buddy"]);
   });

@@ -18,6 +18,8 @@ export type Project = {
   slug: "cliniq" | "pawlift" | "adhd-buddy";
   name: string;
   tagline: string;
+  /** Completes "<name> is …" for the assistant's scripted answers. */
+  kind: string;
   summary: string;
   tags: string[];
   color: string;
@@ -89,6 +91,7 @@ export const projects: Project[] = [
     slug: "cliniq",
     name: "ClinIQ",
     tagline: "Australian health-data integration demo",
+    kind: "an Australian health-data integration demo",
     summary:
       "A demo electronic health record that turns HL7 v2 pathology messages and clinical notes into validated, SNOMED CT-AU coded FHIR data, with a clinician review step.",
     tags: ["FHIR R4", "HL7 v2", "SNOMED CT-AU", "Next.js", "Python", "Cloud Run"],
@@ -172,6 +175,7 @@ export const projects: Project[] = [
     slug: "pawlift",
     name: "PawLift",
     tagline: "Rescue animal transport coordination",
+    kind: "a rescue animal transport coordination app",
     summary:
       "A phone-first app that matches volunteer drivers' existing trips with rescue animals that need a lift, with privacy-first Postgres design.",
     tags: ["Next.js", "PostgreSQL", "PostGIS", "Row-level security", "Playwright"],
@@ -241,6 +245,7 @@ export const projects: Project[] = [
     slug: "adhd-buddy",
     name: "ADHD Buddy",
     tagline: "A task-starting app for adults with ADHD",
+    kind: "a task-starting app for adults with ADHD",
     summary:
       "Built for the hardest part of ADHD: starting. Quick capture, a 5-minute focus runway and reminders that back off instead of nagging.",
     tags: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS"],
@@ -295,7 +300,7 @@ export const experience = [
   {
     dates: "Nov 2025 – present",
     role: "AI Data Annotator & Evaluator (freelance, remote)",
-    organisation: "Outlier; Prolific and OneForma since Nov 2026",
+    organisation: "Outlier (since Nov 2025); Prolific and OneForma (since Nov 2026)",
     did: "Evaluate and rank large language model responses for accuracy, truthfulness and safety. Write original prompts and reference answers in reasoning, Python and SQL.",
   },
   {
@@ -303,7 +308,7 @@ export const experience = [
     role: "Facility Operations Team Member (part-time)",
     organisation:
       "Crown Melbourne via ISS Facility Services (Apr 2025 – Nov 2026), then Millennium Services Group (Nov 2026 – present); Maid to Clean (Jan 2024 – May 2025)",
-    did: "Kept on through the Crown contract handover; part-time permanent. Train new team members on site procedures, equipment and hygiene standards. High-traffic public areas to strict safety protocols.",
+    did: "Kept on through the Crown contract handover; part-time permanent. Train new team members on site procedures, equipment and hygiene standards. Clean and sanitise high-traffic public areas to strict safety protocols.",
   },
   {
     dates: "Feb 2022 – 2024",
@@ -366,7 +371,7 @@ export const certifications = [
       "Evaluations of AI Applications in Healthcare",
       "AI in Healthcare Capstone Project",
     ],
-    credentialUrl: "[TODO: credential URL]",
+    credentialUrl: "https://www.coursera.org/account/accomplishments/specialization/VBZ041SX2YIC",
   },
 ];
 
@@ -395,6 +400,9 @@ export const footer = {
   left: "© 2026 Talha Tawsif · Melbourne",
   right: "Built with Next.js, deployed on Vercel.",
 };
+
+/** Placeholders show only in development; production hides them. */
+export const showTodos = process.env.NODE_ENV !== "production";
 
 export const isTodo = (v: unknown): v is string => typeof v === "string" && v.startsWith("[TODO");
 

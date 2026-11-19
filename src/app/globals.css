@@ -111,8 +111,11 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-a {
-  color: var(--accent);
+/* In the base layer so utilities such as text-on-accent can override the default link colour. */
+@layer base {
+  a {
+    color: var(--accent);
+  }
 }
 
 :focus-visible {

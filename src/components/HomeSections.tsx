@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { Download, Mail } from "lucide-react";
-import { atAGlance, certifications, claudeNote, contact, education, experience, profile, projects, skills, summary } from "@/content/site";
+import { atAGlance, isTodo, showTodos, certifications, claudeNote, contact, education, experience, profile, projects, skills, summary } from "@/content/site";
 import { LinkButton } from "./Button";
 import { DataTable } from "./DataTable";
 import { InstitutionLogo } from "./InstitutionLogo";
@@ -101,7 +101,11 @@ export function CertificationsSection() {
             <h3 className="text-base font-semibold">{c.name}</h3>
             <p className="text-sm text-text-muted">{c.issuer}, {c.date}</p>
             <p className="mt-1 text-sm">Five courses: {c.courses.join("; ")}.</p>
-            <p className="mt-1 text-sm">Credential: <Txt>{c.credentialUrl}</Txt></p>
+            {isTodo(c.credentialUrl) ? (
+              showTodos && <p className="mt-1 text-sm">Credential: <Txt>{c.credentialUrl}</Txt></p>
+            ) : (
+              <p className="mt-1 text-sm"><a href={c.credentialUrl}>View credential<span className="sr-only"> for {c.name}</span></a></p>
+            )}
           </div>
         </div>
       ))}

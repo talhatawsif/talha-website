@@ -12,14 +12,16 @@ export function NavLinks({ items }: { items: readonly (readonly [string, string]
 
   useEffect(() => {
     if (!home) return;
-    const els = items.map(([, href]) => document.getElementById(href.replace("/#", ""))).filter((e): e is HTMLElement => !!e);
+    // The banner and summary are observed too, so scrolling back to the top clears the highlight and the hash.
+    const ids = ["profile", "summary", ...items.map(([, href]) => href.replace("/#", ""))];
+    const els = ids.map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e);
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
-          if (e.isIntersecting) {
-            setActive(e.target.id);
-            history.replaceState(null, "", `#${e.target.id}`);
-          }
+          if (!e.isIntersecting) continue;
+          const top = e.target.id === "profile" || e.target.id === "summary";
+          setActive(top ? "" : e.target.id);
+          history.replaceState(null, "", top ? location.pathname : `#${e.target.id}`);
         }
       },
       { rootMargin: "-30% 0px -60% 0px" },

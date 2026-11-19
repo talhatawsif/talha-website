@@ -1,8 +1,9 @@
 import { cacheLife } from "next/cache";
 import { projects } from "@/content/site";
 
-export type ServiceState = "up" | "slow" | "waking" | "down";
-export type ServiceStatus = { state: ServiceState; ms: number };
+import type { ServiceState, ServiceStatus } from "./status-label";
+
+export type { ServiceState, ServiceStatus };
 
 async function probe(url: string): Promise<ServiceStatus & { ok: boolean }> {
   const t0 = Date.now();

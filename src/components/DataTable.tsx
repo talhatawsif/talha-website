@@ -16,8 +16,12 @@ export function DataTable({ caption, columns, rows }: { caption: string; columns
         {rows.map((cells, r) => (
           <tr key={r} className="max-md:mb-3 max-md:block max-md:border max-md:border-border">
             {cells.map((cell, c) => (
-              <td key={c} className="border border-border px-3 py-2 align-top max-md:block max-md:border-0 max-md:border-b">
-                <span className="mb-0.5 block text-xs text-text-muted md:hidden">{columns[c]}</span>
+              <td
+                key={c}
+                data-label={columns[c]}
+                // The phone label is generated content, so it is never part of the cell's text ("DatesNov 2025").
+                className="border border-border px-3 py-2 align-top max-md:block max-md:border-0 max-md:border-b max-md:before:mb-0.5 max-md:before:block max-md:before:text-xs max-md:before:text-text-muted max-md:before:content-[attr(data-label)]"
+              >
                 {cell}
               </td>
             ))}

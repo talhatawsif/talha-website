@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ViewTransition } from "react";
-import { projects, type Project } from "@/content/site";
+import { isTodo, projects, showTodos, type Project } from "@/content/site";
 import { LinkButton } from "./Button";
 import { DataTable } from "./DataTable";
 import { ProjectStatus } from "./ProjectStatus";
@@ -39,6 +39,7 @@ function Demo({ p }: { p: Project }) {
 
 export function CaseStudy({ project: p }: { project: Project }) {
   const c = p.caseStudy;
+  const shots = c.screenshots.filter((s) => s.src || showTodos); // unfilled placeholders are development-only
   const i = projects.findIndex((x) => x.slug === p.slug);
   const prev = projects[(i + projects.length - 1) % projects.length];
   const next = projects[(i + 1) % projects.length];
@@ -83,11 +84,11 @@ export function CaseStudy({ project: p }: { project: Project }) {
         </ol>
       </P>
       <P id="results" title="Results">
-        <DataTable caption={`${p.name} results`} columns={["Measure", "Result", "Note"]} rows={c.results.map((r) => [r.measure, <Txt key="r">{r.result}</Txt>, r.note])} />
+        <DataTable caption={`${p.name} results`} columns={["Measure", "Result", "Note"]} rows={c.results.filter((r) => showTodos || !isTodo(r.result)).map((r) => [r.measure, <Txt key="r">{r.result}</Txt>, r.note])} />
       </P>
-      <P id="screenshots" title="Screenshots">
+      {shots.length > 0 && <P id="screenshots" title="Screenshots">
         <ul className="grid gap-4 md:grid-cols-2">
-          {c.screenshots.map((s, i) => (
+          {shots.map((s, i) => (
             <li key={i}>
               {s.src ? (
                 <Image src={s.src} alt={s.alt ?? `${p.name} screenshot ${i + 1}`} width={1280} height={800} sizes="(min-width: 768px) 500px, 100vw" className="h-auto w-full rounded-sm border border-border" />
@@ -98,7 +99,7 @@ export function CaseStudy({ project: p }: { project: Project }) {
             </li>
           ))}
         </ul>
-      </P>
+      </P>}
       <P id="how" title="How I built it"><MachineNote>{c.howIBuilt}</MachineNote></P>
       <P id="limits" title="Limits and what's next"><Bullets items={c.limits} /></P>
 
