@@ -9,7 +9,9 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "check:tokens": "node scripts/check-tokens.mjs",
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run check:tokens && npm run build"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

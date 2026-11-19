@@ -18,6 +18,8 @@
   --machine-bg: #e6f3f2;
   --warning: #8a5a00;
   --warning-bg: #fff4d6;
+  --tile: #ffffff;
+  --tile-text: #17212b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -76,6 +78,8 @@
   --color-machine-bg: var(--machine-bg);
   --color-warning: var(--warning);
   --color-warning-bg: var(--warning-bg);
+  --color-tile: var(--tile);
+  --color-tile-text: var(--tile-text);
 
   --font-sans: var(--font-public-sans), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
