@@ -11,7 +11,8 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "check:tokens": "node scripts/check-tokens.mjs",
-    "ci": "npm run lint && npm run typecheck && npm run test && npm run check:tokens && npm run build"
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run check:tokens && npm run build",
+    "probe:models": "node --env-file=.env.local scripts/probe-models.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

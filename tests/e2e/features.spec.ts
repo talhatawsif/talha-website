@@ -55,3 +55,9 @@ test("scroll-spy marks the section in view and updates the hash", async ({ page 
   await expect(page.getByRole("navigation", { name: "Main", exact: true }).getByRole("link", { name: "Education" })).toHaveAttribute("aria-current", "location");
   await expect(page).toHaveURL(/#education$/);
 });
+
+test("ask panel shows the direct-email fallback when the assistant is unavailable", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#ask").getByText("Ask me directly")).toBeVisible();
+  await expect(page.locator("#ask")).toContainText("Answers come from this site only");
+});

@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import { isTodo } from "@/content/site";
 import { Todo } from "./Todo";
 
-export function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+export function Section({ id, title, children, noPrint }: { id: string; title: string; children: ReactNode; noPrint?: boolean }) {
   return (
-    <section id={id} aria-labelledby={`${id}-h`} className="reveal border-b border-border bg-surface">
+    <section id={id} aria-labelledby={`${id}-h`} className={`reveal border-b border-border bg-surface ${noPrint ? "print:hidden" : ""}`}>
       <div className="mx-auto max-w-page px-4 py-6 md:px-6">
         <h2 id={`${id}-h`} className="mb-3 text-lg font-semibold">{title}</h2>
         {children}

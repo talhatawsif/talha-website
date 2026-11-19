@@ -1,6 +1,7 @@
 import { CertificationsSection, ContactSection, EducationSection, ExperienceSection, ProjectsSection, SkillsSection, SummarySection } from "@/components/HomeSections";
 import { JsonLd } from "@/components/JsonLd";
 import { profile } from "@/content/site";
+import { AskPanel } from "@/components/AskPanel";
 import { IdentityBanner } from "@/components/IdentityBanner";
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
       <EducationSection />
       <SkillsSection />
       <CertificationsSection />
+      <AskPanel />
       <ContactSection />
     </main>
   );
