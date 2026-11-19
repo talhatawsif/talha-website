@@ -166,6 +166,7 @@ test("licences appear next to the Stanford certificate, without logos, and in th
   await expect(group).toContainText("SNOMED International, via NCTS, accepted Nov 2026");
   await expect(group).toContainText("Australian Digital Health Agency, NCTS, accepted Nov 2026");
   await expect(group).toContainText("NTS API client for ClinIQ");
+  await expect(group).not.toContainText("confirmed eligibility");
   await expect(group.locator("img, svg")).toHaveCount(0);
   await expect(page.locator("#summary")).toContainText("registered NCTS licensee");
   const ld = await page.locator('script[type="application/ld+json"]').first().textContent();

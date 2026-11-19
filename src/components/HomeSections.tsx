@@ -123,7 +123,7 @@ export function CertificationsSection() {
           ))}
         </ul>
         <p className="mt-2 max-w-[72ch] text-sm">
-          {licenceContext.registered.charAt(0).toUpperCase() + licenceContext.registered.slice(1)}. He {licenceContext.confirmed}.
+          {licenceContext.registered.charAt(0).toUpperCase() + licenceContext.registered.slice(1)}.
         </p>
       </div>
     </Section>
