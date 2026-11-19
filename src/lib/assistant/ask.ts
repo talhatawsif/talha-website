@@ -5,7 +5,7 @@ import { assertFree, isRefusal, NOT_ON_SITE, REFUSAL, RESTING } from "./guard.ts
 export const MAX_QUESTION = 400;
 const TIMEOUT_MS = 8000;
 
-export type AskResult = { status: "ok" | "refused" | "limited" | "resting" | "unavailable" | "invalid" | "error"; text: string; citations: string[] };
+export type AskResult = { status: "ok" | "refused" | "limited" | "resting" | "unavailable" | "invalid" | "error"; text: string; citations: string[]; model?: string };
 
 const SYSTEM = `You answer questions about Talha Tawsif for visitors to his portfolio site.
 Rules:
@@ -47,6 +47,7 @@ async function callModel(model: string, question: string, key: string, f: typeof
       max_tokens: 300,
       temperature: 0.2,
       reasoning: { enabled: false }, // reasoning tokens would eat the 300-token budget and leave an empty answer
+      usage: { include: true }, // so the response reports cost for the breaker
       messages: [
         { role: "system", content: `${SYSTEM}\n\nSITE CONTENT\n${buildContext()}` },
         { role: "user", content: question },
@@ -71,13 +72,16 @@ export async function askAssistant(question: string, ip: string, deps: Deps): Pr
   for (const model of deps.models.slice(0, 2)) {
     try {
       const data = await callModel(model, q, deps.key, f);
-      // Cost breaker: any cost, or a response from a non-free model, shuts the assistant for the day.
-      if ((data.usage?.cost ?? 0) !== 0 || (data.model && !data.model.endsWith(":free"))) {
+      // Server log: the model that actually answered, never the question or answer text.
+      console.log(JSON.stringify({ event: "assistant", model: data.model ?? "unknown" }));
+      // Cost breaker: a cost above 0, a missing cost field, or a non-free answering model shuts the assistant for the day.
+      const cost = data.usage?.cost;
+      if (typeof cost !== "number" || cost > 0 || (data.model && !data.model.endsWith(":free"))) {
         trippedOn = today(now);
-        return { status: "resting", text: RESTING, citations: [] };
+        return { status: "resting", text: RESTING, citations: [], model: data.model };
       }
       const out = filterCited(data.choices?.[0]?.message?.content ?? "", validIds);
-      return { status: "ok", ...out };
+      return { status: "ok", ...out, model: data.model };
     } catch (e) {
       if (e instanceof Error && e.message.startsWith("Refusing non-free")) throw e;
       // timeout or provider error: fall through to the next model

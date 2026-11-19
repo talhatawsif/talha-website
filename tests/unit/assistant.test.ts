@@ -50,6 +50,20 @@ describe("citation filter", () => {
     expect(out.citations).toEqual(["projects.cliniq"]);
   });
   it("falls back when nothing is cited", () => expect(filterCited("Trust me.", validIds).text).toBe(NOT_ON_SITE));
+  it.each([
+    ["Next.js", "ClinIQ runs on Next.js and TypeScript [projects.cliniq]."],
+    ["Node.js", "He uses Node.js and FastAPI [skills]."],
+    ["e.g.", "He knows health standards, e.g. FHIR and HL7 v2 [skills]."],
+    ["e.g. before a capital", "He knows tools, e.g. Next.js, Python and SQL [skills]."],
+    ["v0.2.0", "ADHD Buddy has two releases, v0.1.0 and v0.2.0 [projects.adhd-buddy]."],
+  ])("does not split on %s", (_n, answer) => {
+    const out = filterCited(answer, validIds);
+    expect(out.text).toBe(answer);
+  });
+  it("handles a citation after the full stop and multiple sentences", () => {
+    const out = filterCited("It uses Next.js. [projects.cliniq] He knows Node.js [skills]. Trust me.", validIds);
+    expect(out.text).toBe("It uses Next.js. [projects.cliniq] He knows Node.js [skills].");
+  });
   it("keeps at most 4 sentences", () => {
     const five = Array.from({ length: 5 }, () => "Fact [skills].").join(" ");
     expect(filterCited(five, validIds).text.match(/Fact/g)).toHaveLength(4);
@@ -76,8 +90,29 @@ describe("assistant", () => {
     const f = reply("Fact [skills].", { model: "paid/x" });
     expect((await askAssistant("What skills?", "5.5.5.5", { key: "k", models: ["a:free"], fetchImpl: f as unknown as typeof fetch })).status).toBe("resting");
   });
+  it("trips the breaker when the cost field is missing", async () => {
+    const f = vi.fn(async () => new Response(JSON.stringify({ model: "a:free", choices: [{ message: { content: "Fact [skills]." } }] })));
+    const r = await askAssistant("What skills?", "9.9.9.9", { key: "k", models: ["a:free"], fetchImpl: f as unknown as typeof fetch });
+    expect(r.status).toBe("resting");
+  });
+  it("asks OpenRouter for usage accounting on every request", async () => {
+    const f = reply("Fact [skills].");
+    await askAssistant("What skills?", "10.0.0.1", { key: "k", models: ["a:free"], fetchImpl: f as unknown as typeof fetch });
+    const body = JSON.parse((f.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
+    expect(body.usage).toEqual({ include: true });
+  });
+  it("logs only the answering model id and returns it", async () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const f = reply("Talha built a secret thing [skills].", { model: "google/gemma:free" });
+    const r = await askAssistant("Tell me the secret question text", "10.0.0.2", { key: "k", models: ["a:free"], fetchImpl: f as unknown as typeof fetch });
+    expect(r.model).toBe("google/gemma:free");
+    const logged = log.mock.calls.flat().join(" ");
+    log.mockRestore();
+    expect(logged).toContain("google/gemma:free");
+    expect(logged).not.toContain("secret");
+  });
   it("falls back to the second model on error", async () => {
-    const f = vi.fn().mockRejectedValueOnce(new Error("boom")).mockResolvedValueOnce(new Response(JSON.stringify({ model: "b:free", choices: [{ message: { content: "Fact [skills]." } }] })));
+    const f = vi.fn().mockRejectedValueOnce(new Error("boom")).mockResolvedValueOnce(new Response(JSON.stringify({ model: "b:free", choices: [{ message: { content: "Fact [skills]." } }], usage: { cost: 0 } })));
     const r = await askAssistant("What skills?", "6.6.6.6", { key: "k", models: ["a:free", "b:free"], fetchImpl: f as unknown as typeof fetch });
     expect(r.status).toBe("ok");
     expect(f).toHaveBeenCalledTimes(2);

@@ -33,6 +33,7 @@ for (const m of candidates) {
       model: m.id,
       max_tokens: 300,
       reasoning: { enabled: false },
+      usage: { include: true },
       messages: [
         { role: "system", content: `Answer only from the content, in at most 4 sentences, ending each sentence with a citation like [projects.cliniq]. Otherwise reply: ${NOT_ON_SITE}\n\n${buildContext()}` },
         { role: "user", content: "What is ClinIQ?" },
