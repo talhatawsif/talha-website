@@ -11,3 +11,4 @@ playwright-report/
 # local secrets, never commit
 meow/
 *.docx
+.vercel

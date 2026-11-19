@@ -31,7 +31,7 @@ for (const m of candidates) {
     }),
     signal: AbortSignal.timeout(8000),
   }).catch(() => null);
-  const out = res?.ok ? filterCited((await res.json()).choices?.[0]?.message?.content ?? "", validIds) : null;
+  const out = res?.ok ? filterCited(((await res.json().catch(() => ({}))) as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? "", validIds) : null;
   console.log(m.id, out && out.citations.length ? "pass" : "fail");
   if (out && out.citations.length) passed.push(m.id);
 }
