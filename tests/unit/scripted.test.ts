@@ -64,7 +64,7 @@ describe("scripted answers: content", () => {
   it("education reads as natural sentences built from site.ts", () => {
     expect(scriptedAnswer("education")!.text).toBe(
       "Talha is in the final year of a Bachelor of Information Technology at Kent Institute Australia, finishing in June 2027 [education]. " +
-        "Before IT he studied biomedical engineering at Swinburne (2022–2024) and completed the first year of electrical and electronic engineering at BRAC University [education]. " +
+        "Before IT he studied biomedical engineering at Swinburne University of Technology (2022–2024) and completed the first year of electrical and electronic engineering at BRAC University [education]. " +
         "He also holds Stanford Medicine's AI in Healthcare Specialisation [certifications].",
     );
   });
@@ -83,7 +83,7 @@ describe("scripted answers: content", () => {
     expect(t("availability")).toContain("Talha is available for part-time and internships now, with graduate roles from Jul 2027 [profile].");
     expect(t("contact")).toContain(`You can email Talha at ${profile.email} [contact].`);
     expect(t("contact")).toContain(`His CV is on this site at ${profile.cvUrl} [contact].`);
-    expect(t("education")).toContain(education[1].qualification.length ? "Swinburne (2022–2024)" : "");
+    expect(t("education")).toContain(education[1].qualification.length ? "Swinburne University of Technology (2022–2024)" : "");
     expect(atAGlance.length).toBe(4);
   });
 

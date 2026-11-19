@@ -40,8 +40,8 @@ export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "[TODO: domain]";
 
 export const institutions: Record<InstitutionId, { name: string; short: string; initials: string; logo?: string; ratio?: number }> = {
   kent: { name: "Kent Institute Australia", short: "Kent Institute Australia", initials: "KI", logo: "/logos/kent.png", ratio: 300 / 157 },
-  swinburne: { name: "Swinburne University of Technology", short: "Swinburne", initials: "SU", logo: "/logos/swinburne.svg", ratio: 500 / 252.84 },
-  bracu: { name: "BRAC University", short: "BRAC University", initials: "BU" },
+  swinburne: { name: "Swinburne University of Technology", short: "Swinburne University of Technology", initials: "SU", logo: "/logos/swinburne.svg", ratio: 500 / 252.84 },
+  bracu: { name: "BRAC University", short: "BRAC University", initials: "BU", logo: "/logos/bracu.jpg", ratio: 229 / 136 },
   stanford: { name: "Stanford University School of Medicine", short: "Stanford Medicine", initials: "SM", logo: "/logos/stanford.jpg", ratio: 2400 / 778 },
 };
 
@@ -63,8 +63,8 @@ export const profile = {
 };
 
 export const summary = [
-  "I build software that moves clinical data safely between systems. Before IT, I studied electrical and electronic engineering at BRAC University and biomedical engineering at Swinburne, and I completed Stanford Medicine's AI in Healthcare Specialisation. So I come to health software already knowing the anatomy, the imaging and the clinical data behind it.",
-  "I've designed and shipped three full-stack apps. The main one, ClinIQ, converts HL7 v2 pathology messages into FHIR, codes clinical notes to SNOMED CT-AU with a clinician review step, and validates 20 synthetic patients against AU Core with 0 errors. I also evaluate AI model responses for accuracy and safety as a freelance AI data annotator.",
+  "I build software that moves clinical data safely between systems. Before IT, I studied biomedical engineering at Swinburne University of Technology and electrical and electronic engineering at BRAC University, and I completed Stanford Medicine's AI in Healthcare Specialisation. So I come to health software already knowing the anatomy, the imaging and the clinical data behind it.",
+  "I've designed and shipped three full-stack apps. The main one, ClinIQ, converts HL7 v2 pathology messages into FHIR, codes clinical notes to SNOMED CT-AU with a clinician review step, and validates 20 synthetic patients against AU Core with 0 errors. PawLift matches volunteer drivers' existing trips with rescue animals that need a lift, keeps private addresses and medical notes visible only to the confirmed driver, and passes 223 of 223 database security tests. I also evaluate AI model responses for accuracy and safety as a freelance AI data annotator.",
   "Alongside full-time study I've held a job since 2022, and I've trained new staff in every role. I'm reliable, I learn fast, and I finish what I start.",
 ];
 
@@ -78,7 +78,7 @@ export const atAGlance = [
 /** Only what the CV needs that the site does not already hold. */
 export const cv = {
   summary:
-    "Final-year IT student who builds software that moves clinical data safely between systems. Before IT I studied electrical and electronic engineering (BRAC University) and biomedical engineering (Swinburne), and I completed Stanford Medicine's AI in Healthcare Specialisation. I have designed and shipped three full-stack apps, including an HL7 v2 to FHIR integration demo validated against AU Core with 0 errors. I evaluate AI model responses for accuracy and safety as a freelance annotator, and I have held a job alongside full-time study since 2022, training new staff in every role.",
+    "Final-year IT student who builds software that moves clinical data safely between systems. Before IT I studied biomedical engineering (Swinburne University of Technology) and electrical and electronic engineering (BRAC University), and I completed Stanford Medicine's AI in Healthcare Specialisation. I have designed and shipped three full-stack apps, including an HL7 v2 to FHIR integration demo validated against AU Core with 0 errors. I evaluate AI model responses for accuracy and safety as a freelance annotator, and I have held a job alongside full-time study since 2022, training new staff in every role.",
   availability: "Available for part-time and internship roles now, and graduate roles from July 2027.",
   languages: "English (full professional), Bengali (native), Hindi and Urdu (spoken)",
 };
