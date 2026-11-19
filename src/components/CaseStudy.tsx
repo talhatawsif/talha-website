@@ -87,14 +87,14 @@ export function CaseStudy({ project: p }: { project: Project }) {
       </P>
       <P id="screenshots" title="Screenshots">
         <ul className="grid gap-4 md:grid-cols-2">
-          {c.screenshots.map((s) => (
-            <li key={s.caption}>
+          {c.screenshots.map((s, i) => (
+            <li key={i}>
               {s.src ? (
-                <Image src={s.src} alt={s.alt ?? s.caption} width={1280} height={800} sizes="(min-width: 768px) 500px, 100vw" className="h-auto w-full rounded-sm border border-border" />
+                <Image src={s.src} alt={s.alt ?? `${p.name} screenshot ${i + 1}`} width={1280} height={800} sizes="(min-width: 768px) 500px, 100vw" className="h-auto w-full rounded-sm border border-border" />
               ) : (
                 <div className="flex aspect-video items-center justify-center rounded-sm border border-dashed border-border-strong bg-sunken text-sm text-text-muted">[TODO: screenshot]</div>
               )}
-              <p className="mt-1 text-sm text-text-muted">{s.caption}</p>
+              {s.caption && <p className="mt-1 text-sm text-text-muted">{s.caption}</p>}
             </li>
           ))}
         </ul>

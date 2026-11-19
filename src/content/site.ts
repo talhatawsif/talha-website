@@ -1,6 +1,6 @@
 export type Result = { measure: string; result: string; note: string };
 export type HardProblem = { title: string; did: string; why?: string };
-export type Screenshot = { caption: string; src?: string; alt?: string };
+export type Screenshot = { caption?: string; src?: string; alt?: string };
 
 export type CaseStudy = {
   problem: string;
@@ -27,6 +27,8 @@ export type Project = {
   codeUrl: string;
   thumbnail?: string;
   videoUrl?: string;
+  cvDates: string;
+  cvBullets: string[];
   caseStudy: CaseStudy;
 };
 
@@ -54,7 +56,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/talha-tawsif",
   github: "https://github.com/talhatawsif",
   email: "talhatawsif.dev@gmail.com",
-  cvUrl: "/cv/Talha-Tawsif-CV.pdf",
+  cvUrl: "/cv.pdf",
   photo: "/talha.jpg",
 };
 
@@ -70,6 +72,14 @@ export const atAGlance = [
   { label: "AI and automation", value: "LLM integration and evaluation, n8n workflows, AI-assisted development (Claude Code)" },
   { label: "Cloud and testing", value: "Google Cloud Run, Vercel, Docker, GitHub Actions, Playwright, Vitest" },
 ];
+
+/** Only what the CV needs that the site does not already hold. */
+export const cv = {
+  summary:
+    "Final-year IT student who builds software that moves clinical data safely between systems. Before IT I studied electrical and electronic engineering (BRAC University) and biomedical engineering (Swinburne), and I completed Stanford Medicine's AI in Healthcare Specialisation. I have designed and shipped three full-stack apps, including an HL7 v2 to FHIR integration demo validated against AU Core with 0 errors. I evaluate AI model responses for accuracy and safety as a freelance annotator, and I have held a job alongside full-time study since 2022, training new staff in every role.",
+  availability: "Available for part-time and internship roles now, and graduate roles from July 2027.",
+  languages: "English (full professional), Bengali (native), Hindi and Urdu (spoken)",
+};
 
 export const claudeNote =
   "All three were built with Claude Code as my AI coding partner. I wrote and revised the specifications, made the design decisions, and tested and deployed each one.";
@@ -87,6 +97,14 @@ export const projects: Project[] = [
     liveUrl: "https://cliniq-inky-ten.vercel.app",
     liveNote: "One-click demo sign-in. First load can take up to a minute while the server wakes.",
     codeUrl: "https://github.com/talhatawsif/cliniq",
+    cvDates: "Aug 2026 – present",
+    cvBullets: [
+      "Converts HL7 v2 ORU^R01 pathology messages to FHIR R4 with acknowledgements; resends and corrections update the same record instead of duplicating it.",
+      "Codes clinical notes to SNOMED CT-AU, kept unconfirmed until a clinician approves them, with FHIR Provenance; 93.2% precision, 57.5% recall on 12 notes (AI-written labels).",
+      "20 synthetic patients validate against AU Core 2.0.0 and AU Patient Summary with 0 errors; CDS Hooks decision support and a SMART on FHIR launch.",
+      "Guarded LLM chart assistant on free OpenRouter models: cited answers only; 3 of 3 prompt injections resisted in a 20-question evaluation.",
+      "Designed the spec, standards and safety limits, and built, tested and deployed it with Claude Code; GitHub Actions CI, Vitest and Playwright with accessibility checks.",
+    ],
     caseStudy: {
       problem:
         "In Australian health services, much clinical meaning sits in HL7 v2 messages and free-text notes, while registries, referrals and decision support need coded, structured FHIR data. ClinIQ is a prototype of a safe way to bridge that gap, using synthetic patients only.",
@@ -138,12 +156,7 @@ export const projects: Project[] = [
         },
         { measure: "Automated tests", result: "[TODO: real counts from the test runner]", note: "" },
       ],
-      screenshots: [
-        { caption: "Patient chart with pathology trends" },
-        { caption: "Clinician review of coded findings" },
-        { caption: "View FHIR JSON drawer" },
-        { caption: "Chart assistant with cited answers" },
-      ],
+      screenshots: [{}, {}, {}, {}],
       howIBuilt:
         "I chose the problem and the Australian standards, wrote and revised the specification and its acceptance tests, made and recorded each design decision, set up the cloud accounts and deployments, and decided what not to claim. I built it with Claude Code as my AI coding partner.",
       limits: [
@@ -166,6 +179,12 @@ export const projects: Project[] = [
     mark: "/brand/pawlift-mark.svg",
     liveUrl: "https://pawlift-three.vercel.app",
     codeUrl: "https://github.com/talhatawsif/pawlift",
+    cvDates: "Nov 2026 – present",
+    cvBullets: [
+      "Matches volunteer drivers' existing trips with rescue animals needing transport, ranked by estimated detour.",
+      "Every state change is one audited Postgres transaction; a race test confirms only 1 of 5 simultaneous claims succeeds.",
+      "Private addresses and medical notes visible only to the confirmed driver; 223 database security tests and automated WCAG 2.1 checks.",
+    ],
     caseStudy: {
       problem:
         "Rescue groups, pounds, shelters and vets often need to move an animal but can't find a driver. Many volunteers are already driving somewhere nearby. PawLift connects the two.",
@@ -208,12 +227,7 @@ export const projects: Project[] = [
         { measure: "Accessibility", result: "No serious or critical WCAG 2.1 A/AA issues", note: "41 page visits at 1280 px and 375 px" },
         { measure: "Scale", result: "37 pages, 22 tables, 44 recorded design decisions", note: "" },
       ],
-      screenshots: [
-        { caption: "Lift search ranked by detour" },
-        { caption: "Lift detail for the confirmed driver" },
-        { caption: "Admin access log" },
-        { caption: "Organisation dashboard" },
-      ],
+      screenshots: [{}, {}, {}, {}],
       howIBuilt:
         "I owned the product, including removing multi-driver relays after building them, for animal-welfare reasons. I built it with Claude Code through staged checkpoints with written decision records and test gates.",
       limits: [
@@ -234,6 +248,10 @@ export const projects: Project[] = [
     mark: "/brand/adhd-buddy-mark.svg",
     liveUrl: "https://adhd-buddy.vercel.app",
     codeUrl: "https://github.com/talhatawsif/adhd-buddy",
+    cvDates: "Aug 2026 – Oct 2026",
+    cvBullets: [
+      "Quick capture, user-written next steps, a 5-minute focus runway and reminders that back off instead of nagging; row-level security on user data.",
+    ],
     caseStudy: {
       problem:
         "For many adults with ADHD the hard part is starting a task, not finishing it. Most task apps treat the problem as discipline. ADHD Buddy is built around getting started.",
@@ -265,12 +283,7 @@ export const projects: Project[] = [
         { measure: "Releases", result: "2 (v0.1.0, v0.2.0)", note: "changelog in the repo" },
         { measure: "Scale", result: "7 pages, 4 database tables", note: "" },
       ],
-      screenshots: [
-        { caption: "Quick capture and sorting" },
-        { caption: "Focus session with runway" },
-        { caption: "Task timeline and history" },
-        { caption: "Reminder back-off settings" },
-      ],
+      screenshots: [{}, {}, {}, {}],
       howIBuilt:
         "I set the product direction and the reasoning behind every feature, documented in the README, and built it with Claude Code.",
       limits: ["Reminders show only while the dashboard is open", "The timer runs in the browser", "No automated tests yet"],
@@ -335,7 +348,7 @@ export const education: {
     institutionLabel: "BRAC University, Dhaka",
     start: "2021",
     end: "2022",
-    notes: "[TODO: first-year units from transcript]",
+    notes: "First-year foundations in mathematics, physics, electrical circuits and programming, including Electrical Circuits I with laboratory (EEE101) and Computer Programming (EEE103).",
   },
 ];
 

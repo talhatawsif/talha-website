@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Public_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/Footer";
+import { RevealObserver } from "@/components/RevealObserver";
 import { TopBar } from "@/components/TopBar";
 import { siteBase } from "@/lib/site-url";
 import "./globals.css";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <TopBar />
         {children}
         <Footer />
+        <RevealObserver />
         <Analytics />
       </body>
     </html>

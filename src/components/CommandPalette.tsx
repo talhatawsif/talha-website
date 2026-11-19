@@ -19,7 +19,7 @@ const sections = [
 
 const itemCls = "flex cursor-pointer items-center justify-between rounded-sm px-3 py-2 text-sm data-[selected=true]:bg-sunken";
 
-export function CommandPalette({ hasCv }: { hasCv: boolean }) {
+export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const router = useRouter();
@@ -76,7 +76,7 @@ export function CommandPalette({ hasCv }: { hasCv: boolean }) {
             <Command.Item value="LinkedIn" className={itemCls} onSelect={() => run(() => { location.href = profile.linkedin; })}>LinkedIn</Command.Item>
             <Command.Item value="GitHub" className={itemCls} onSelect={() => run(() => { location.href = profile.github; })}>GitHub</Command.Item>
             <Command.Item value="Email" className={itemCls} onSelect={() => run(() => { location.href = `mailto:${profile.email}`; })}>Email</Command.Item>
-            {hasCv && <Command.Item value="Download CV" className={itemCls} onSelect={() => run(() => { location.href = profile.cvUrl; })}>Download CV</Command.Item>}
+            <Command.Item value="Download CV" className={itemCls} onSelect={() => run(() => { location.href = profile.cvUrl; })}>Download CV</Command.Item>
           </Command.Group>
           <Command.Group heading="Actions" className="text-xs text-text-muted [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1">
             <Command.Item value="Ask about my work" className={itemCls} onSelect={() => run(() => { if (location.pathname === "/") { document.getElementById("ask")?.scrollIntoView(); document.getElementById("ask-input")?.focus({ preventScroll: true }); } else router.push("/#ask"); })}>Ask about my work</Command.Item>

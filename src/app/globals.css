@@ -151,19 +151,11 @@ a {
   animation-timing-function: ease-out;
 }
 
-/* Reveal: sections fade and rise 8 px as they enter. Needs scroll-driven animations; otherwise static. */
-@keyframes reveal {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: reveal linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 25%;
-    }
-  }
+/* Reveal: each section fades and rises 8 px once, the first time it is seen.
+   RevealObserver adds .js-reveal to <html> and .is-in per section; without JS, or with reduced motion, nothing is hidden. */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal .reveal:not(.is-in) { opacity: 0; transform: translateY(8px); }
+  .js-reveal .reveal.is-in { transition: opacity 240ms ease-out, transform 240ms ease-out; }
 }
 
 dialog[open]:not([aria-label="Command palette"]) {
@@ -184,7 +176,7 @@ dialog[open]:not([aria-label="Command palette"]) {
     --success: #000; --success-bg: #fff; --machine: #000; --machine-bg: #fff; --warning: #000; --warning-bg: #fff;
   }
   body { font-size: 11pt; }
-  .reveal { animation: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
   a[href^="http"]::after,
   a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 9pt; word-break: break-all; }
   a[href^="mailto:"]::after { content: " (" attr(href) ")"; }

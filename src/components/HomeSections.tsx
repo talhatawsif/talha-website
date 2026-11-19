@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import { Download, Mail } from "lucide-react";
 import { atAGlance, certifications, claudeNote, contact, education, experience, profile, projects, skills, summary } from "@/content/site";
-import { hasCv } from "@/lib/cv";
 import { LinkButton } from "./Button";
 import { DataTable } from "./DataTable";
 import { InstitutionLogo } from "./InstitutionLogo";
@@ -133,9 +132,7 @@ export function ContactSection() {
         <LinkButton href={profile.linkedin}>LinkedIn</LinkButton>
         <LinkButton href={profile.github}>GitHub</LinkButton>
         <LinkButton href={`mailto:${profile.email}`}><Mail size={16} strokeWidth={1.5} aria-hidden="true" />Email</LinkButton>
-        {hasCv() && (
-          <LinkButton href={profile.cvUrl} variant="primary" download><Download size={16} strokeWidth={1.5} aria-hidden="true" />Download CV</LinkButton>
-        )}
+                  <LinkButton href={profile.cvUrl} variant="primary" download><Download size={16} strokeWidth={1.5} aria-hidden="true" />Download CV</LinkButton>
       </div>
     </Section>
   );
