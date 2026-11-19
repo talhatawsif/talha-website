@@ -45,3 +45,23 @@ export function filterCited(text: string, valid: ReadonlySet<string>): { text: s
   }
   return kept.length ? { text: kept.join(" "), citations: [...new Set(citations)] } : { text: NOT_ON_SITE, citations: [] };
 }
+
+const stop = new Set("that this with from have they their there which what when were been into than then also more most some such only over about after before while where does done make made very".split(" "));
+const words = (t: string) => new Set((t.toLowerCase().match(/[a-z0-9][a-z0-9.+#-]{2,}/g) ?? []).map((w) => w.replace(/[.+#-]+$/, "")).filter((w) => w.length > 2 && !stop.has(w)));
+const anyCitation = /\[[a-z][a-z0-9.-]*\]/;
+
+/** For an answer with no citations at all: cite the site section that shares the most keywords, or return null. */
+export function attachBestSection(text: string, sections: Record<string, string>): string | null {
+  if (anyCitation.test(text)) return null;
+  const mine = words(text);
+  if (!mine.size) return null;
+  let best = "";
+  let bestScore = 0;
+  for (const [id, body] of Object.entries(sections)) {
+    const theirs = words(body);
+    const score = [...mine].filter((w) => theirs.has(w)).length;
+    if (score > bestScore) [best, bestScore] = [id, score];
+  }
+  if (bestScore < 3 || bestScore / mine.size < 0.3) return null;
+  return [...segmenter.segment(text.trim())].map(({ segment }) => `${segment.trim().replace(/[.!?\s]+$/, "")} [${best}].`).join(" ");
+}

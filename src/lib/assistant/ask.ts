@@ -1,11 +1,25 @@
-import { buildContext, validIds } from "./context.ts";
-import { filterCited } from "./filter.ts";
+import { buildContext, sections, validIds } from "./context.ts";
+import { attachBestSection, filterCited } from "./filter.ts";
 import { assertFree, isRefusal, NOT_ON_SITE, REFUSAL, RESTING } from "./guard.ts";
+import { scriptedAnswer } from "./scripted.ts";
 
 export const MAX_QUESTION = 400;
 const TIMEOUT_MS = 8000;
 
-export type AskResult = { status: "ok" | "refused" | "limited" | "resting" | "unavailable" | "invalid" | "error"; text: string; citations: string[]; model?: string };
+export type Reason = "scripted" | "model_ok" | "model_declined" | "filter_dropped_all" | "prefilter_refusal" | "breaker" | "error" | "invalid" | "rate_limited" | "unavailable";
+export type AskResult = {
+  status: "ok" | "refused" | "limited" | "resting" | "unavailable" | "invalid" | "error";
+  text: string;
+  citations: string[];
+  reason: Reason;
+  model?: string;
+};
+
+/** One server log line per answer: the reason code and answering model only, never the question or answer text. */
+function done(r: AskResult): AskResult {
+  console.log(JSON.stringify({ event: "assistant", reason: r.reason, model: r.model }));
+  return r;
+}
 
 const SYSTEM = `You answer questions about Talha Tawsif for visitors to his portfolio site.
 Rules:
@@ -62,30 +76,42 @@ async function callModel(model: string, question: string, key: string, f: typeof
 export async function askAssistant(question: string, ip: string, deps: Deps): Promise<AskResult> {
   const now = deps.now ?? Date.now();
   const q = question.trim();
-  if (!q || q.length > MAX_QUESTION) return { status: "invalid", text: `Please ask a question of up to ${MAX_QUESTION} characters.`, citations: [] };
-  if (isRefusal(q)) return { status: "refused", text: REFUSAL, citations: [] };
-  if (!deps.key || deps.models.length === 0) return { status: "unavailable", text: "", citations: [] };
-  if (isResting(now)) return { status: "resting", text: RESTING, citations: [] };
-  if (!allowed(ip, now)) return { status: "limited", text: "Too many questions. Please try again later or email me.", citations: [] };
+  if (!q || q.length > MAX_QUESTION) return done({ status: "invalid", text: `Please ask a question of up to ${MAX_QUESTION} characters.`, citations: [], reason: "invalid" });
+  if (isRefusal(q)) return done({ status: "refused", text: REFUSAL, citations: [], reason: "prefilter_refusal" });
+  if (!allowed(ip, now)) return done({ status: "limited", text: "Too many questions. Please try again later or email me.", citations: [], reason: "rate_limited" });
+
+  // Common questions are answered straight from site.ts with no model call.
+  const script = scriptedAnswer(q);
+  if (script) return done({ status: "ok", text: script.text, citations: script.citations, reason: "scripted" });
+
+  if (!deps.key || deps.models.length === 0) return done({ status: "unavailable", text: "", citations: [], reason: "unavailable" });
+  if (isResting(now)) return done({ status: "resting", text: RESTING, citations: [], reason: "breaker" });
 
   const f = deps.fetchImpl ?? fetch;
   for (const model of deps.models.slice(0, 2)) {
     try {
       const data = await callModel(model, q, deps.key, f);
-      // Server log: the model that actually answered, never the question or answer text.
-      console.log(JSON.stringify({ event: "assistant", model: data.model ?? "unknown" }));
       // Cost breaker: a cost above 0, a missing cost field, or a non-free answering model shuts the assistant for the day.
       const cost = data.usage?.cost;
       if (typeof cost !== "number" || cost > 0 || (data.model && !data.model.endsWith(":free"))) {
         trippedOn = today(now);
-        return { status: "resting", text: RESTING, citations: [], model: data.model };
+        return done({ status: "resting", text: RESTING, citations: [], reason: "breaker", model: data.model });
       }
-      const out = filterCited(data.choices?.[0]?.message?.content ?? "", validIds);
-      return { status: "ok", ...out, model: data.model };
+      const raw = (data.choices?.[0]?.message?.content ?? "").trim();
+      if (!raw) continue; // empty answer: try the next model
+      if (raw.toLowerCase() === NOT_ON_SITE.toLowerCase()) return done({ status: "ok", text: NOT_ON_SITE, citations: [], reason: "model_declined", model: data.model });
+
+      let out = filterCited(raw, validIds);
+      if (!out.citations.length) {
+        // No citations at all: cite the best-matching section if the answer clearly comes from it.
+        const attached = attachBestSection(raw, sections);
+        if (attached) out = filterCited(attached, validIds);
+      }
+      return done({ status: "ok", ...out, reason: out.citations.length ? "model_ok" : "filter_dropped_all", model: data.model });
     } catch (e) {
       if (e instanceof Error && e.message.startsWith("Refusing non-free")) throw e;
       // timeout or provider error: fall through to the next model
     }
   }
-  return { status: "error", text: "The assistant could not answer just now. Please email me.", citations: [] };
+  return done({ status: "error", text: "The assistant could not answer just now. Please email me.", citations: [], reason: "error" });
 }

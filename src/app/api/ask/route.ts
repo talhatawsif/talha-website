@@ -15,9 +15,9 @@ export async function POST(req: Request) {
   const q = typeof body?.question === "string" ? body.question.slice(0, MAX_QUESTION + 1) : "";
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
   try {
-    const { model, ...result } = await askAssistant(q, ip, config());
-    return Response.json(result, { headers: { "Cache-Control": "no-store", ...(model ? { "x-assistant-model": model } : {}) } });
+    const { model, reason, ...result } = await askAssistant(q, ip, config());
+    return Response.json(result, { headers: { "Cache-Control": "no-store", "x-assistant-reason": reason, ...(model ? { "x-assistant-model": model } : {}) } });
   } catch {
-    return Response.json({ status: "error", text: "The assistant could not answer just now. Please email me.", citations: [] }, noStore);
+    return Response.json({ status: "error", text: "The assistant could not answer just now. Please email me.", citations: [] }, { headers: { "Cache-Control": "no-store", "x-assistant-reason": "error" } });
   }
 }
