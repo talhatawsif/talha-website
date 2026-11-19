@@ -48,7 +48,7 @@ const Entry = ({ title, date, sub, bullets, heading }: { title: string; date?: s
 
 export function CvDocument() {
   const site = process.env.NEXT_PUBLIC_SITE_URL;
-  const contact = [profile.location.replace("Victoria", "VIC"), profile.email, strip(profile.linkedin), strip(profile.github), site && strip(site)].filter(Boolean).join(" · ");
+  const contact = [profile.location.replace(", Australia", "").replace("Victoria", "VIC"), profile.email, strip(profile.linkedin), strip(profile.github), site && strip(site)].filter(Boolean).join(" · ");
   const cert = certifications[0];
   return (
     <Document title={`${profile.name} CV`} author={profile.name} language="en-AU">

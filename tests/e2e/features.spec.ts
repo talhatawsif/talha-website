@@ -137,3 +137,11 @@ test("sections are never invisible: hash targets and in-view sections are shown 
   const hidden = await page.$$eval(".reveal", (els) => els.filter((el) => getComputedStyle(el).opacity !== "1").length);
   expect(hidden).toBe(0);
 });
+
+test("banner shows the full location and the email as selectable text", async ({ page }) => {
+  await page.goto("/");
+  const banner = page.getByRole("region", { name: "Identity" });
+  await expect(banner.locator("dd", { hasText: "Melbourne, Victoria, Australia" })).toBeVisible();
+  const email = banner.locator("dd a[href^='mailto:']");
+  await expect(email).toHaveText("talhatawsif.dev@gmail.com");
+});

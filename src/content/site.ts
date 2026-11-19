@@ -50,7 +50,7 @@ export const languageCodes = [["en", "English"], ["bn", "Bengali"], ["hi", "Hind
 export const profile = {
   name: "Talha Tawsif",
   role: "Software developer · Health tech and integration",
-  location: "Melbourne, Victoria",
+  location: "Melbourne, Victoria, Australia",
   studying: "Bachelor of Information Technology, Kent Institute Australia (graduating Jun 2027)",
   studyingInstitution: "kent" as InstitutionId,
   available: "Part-time and internships now · Graduate roles from Jul 2027",
