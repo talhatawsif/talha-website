@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { profile } from "@/content/site";
+import { formatPhone, profile } from "@/content/site";
 import { buildPractitioner } from "@/lib/fhir";
 import { FhirDrawer } from "./FhirDrawer";
 import { InstitutionLogo } from "./InstitutionLogo";
@@ -32,7 +32,7 @@ export function IdentityBanner() {
                 <dt className="text-xs text-text-muted">{label}</dt>
                 <dd className="flex items-center gap-2 text-[14px]">
                   {label === "Studying" && <InstitutionLogo id={profile.studyingInstitution} />}
-                  {label === "Email" ? <a href={`mailto:${value}`}>{value}</a> : label === "Phone" ? <a href={`tel:${value}`}>{value.replace(/^(\+61)(\d{3})(\d{3})(\d{3})$/, "$1 $2 $3 $4")}</a> : <span>{value}</span>}
+                  {label === "Email" ? <a href={`mailto:${value}`}>{value}</a> : label === "Phone" ? <a href={`tel:${value}`}>{formatPhone(value)}</a> : <span>{value}</span>}
                 </dd>
               </div>
             ))}

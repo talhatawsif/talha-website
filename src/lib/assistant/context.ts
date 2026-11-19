@@ -1,4 +1,4 @@
-import { atAGlance, certifications, contact, education, experience, profile, projects, skills, summary } from "../../content/site.ts";
+import { atAGlance, certifications, contact, education, experience, licenceContext, licences, monthYear, profile, projects, skills, summary } from "../../content/site.ts";
 
 const list = (xs: string[]) => xs.map((x) => `- ${x}`).join("\n");
 
@@ -25,6 +25,7 @@ export const sections: Record<string, string> = {
   experience: experience.map((e) => `${e.dates}: ${e.role}, ${e.organisation}. ${e.did}`).join("\n"),
   education: education.map((e) => `${e.dates}: ${e.qualification}, ${e.institutionLabel}. ${e.notes}`).join("\n"),
   certifications: certifications.map((c) => `${c.name}, ${c.issuer}, ${c.date}. Courses: ${c.courses.join("; ")}.`).join("\n"),
+  licences: `${licences.map((l) => `${l.name} (${l.issuer}), accepted ${monthYear(l.accepted)}`).join("; ")}. ${licenceContext.registered}; ${licenceContext.confirmed}. These are licences, not certifications.`,
   skills: skills.map((g) => `${g.group}: ${g.items.join(", ")}`).join("\n"),
   contact: `${contact.text} Email: ${profile.email}.`,
 };

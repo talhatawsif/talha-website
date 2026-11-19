@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
-import { atAGlance, certifications, claudeNote, contact, education, experience, projects, skills, summary } from "@/content/site";
+import { atAGlance, certifications, claudeNote, contact, education, experience, licenceContext, licences, monthYear, projects, skills, summary } from "@/content/site";
 import { LinkButton } from "./Button";
 import { ContactButtons } from "./ContactButtons";
 import { DataTable } from "./DataTable";
@@ -100,7 +100,7 @@ export function EducationSection() {
 
 export function CertificationsSection() {
   return (
-    <Section id="certifications" title="Certifications">
+    <Section id="certifications" title="Certifications and licences">
       {certifications.map((c) => (
         <div key={c.name} className="flex gap-3">
           <InstitutionLogo id={c.institution} />
@@ -112,6 +112,20 @@ export function CertificationsSection() {
           </div>
         </div>
       ))}
+      <div id="licences" className="mt-6 border-t border-border pt-4">
+        <h3 className="text-base font-semibold">Licences</h3>
+        <ul className="mt-2 space-y-2">
+          {licences.map((l) => (
+            <li key={l.name}>
+              <p className="font-medium">{l.name}</p>
+              <p className="text-sm text-text-muted">{l.issuer}, accepted {monthYear(l.accepted)}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 max-w-[72ch] text-sm">
+          {licenceContext.registered.charAt(0).toUpperCase() + licenceContext.registered.slice(1)}. He {licenceContext.confirmed}.
+        </p>
+      </div>
     </Section>
   );
 }

@@ -1,13 +1,13 @@
-import { atAGlance, certifications, education, experience, institutions, profile, projects } from "../../content/site.ts";
+import { atAGlance, certifications, education, experience, institutions, licenceContext, licences, monthYear as shortMonthYear, profile, projects } from "../../content/site.ts";
 
 export type Scripted = { text: string; citations: string[]; intent: string };
 
 /** "Some text." -> "Some text [id]." One cited sentence. */
-const cited = (text: string, id: string) => `${text.replace(/[.\s]+$/, "")} [${id}].`;
-const pack = (intent: string, parts: [string, string][]): Scripted => ({
+const cited = (text: string, id: string | string[]) => `${text.replace(/[.\s]+$/, "")} ${[id].flat().map((i) => `[${i}]`).join(" ")}.`;
+const pack = (intent: string, parts: [string, string | string[]][]): Scripted => ({
   intent,
   text: parts.map(([t, id]) => cited(t, id)).join(" "),
-  citations: [...new Set(parts.map(([, id]) => id))],
+  citations: [...new Set(parts.flatMap(([, id]) => [id].flat()))],
 });
 
 const lowerFirst = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
@@ -50,6 +50,16 @@ function project(p: (typeof projects)[number]): Scripted {
   return pack("project", [intro(p), [what, id], [`It is built with ${list(p.caseStudy.stackLine.split(" · "))}`, id], [`There is a live demo at ${p.liveUrl}`, id]]);
 }
 
+const licenceList = () => list(licences.map((l) => `the ${l.name} (${l.issuer}, accepted ${shortMonthYear(l.accepted)})`));
+
+/** Licences, not certifications; "registered for", never "integrated with". */
+function licencesAnswer(): Scripted {
+  return pack("licences", [
+    [`Talha is a registered NCTS licensee, holding ${licenceList()}`, "licences"],
+    [`He is registered with an NTS API client for ClinIQ, and he ${licenceContext.confirmed}`, "licences"],
+  ]);
+}
+
 function educationAnswer(): Scripted {
   const by = (id: string) => education.find((e) => e.institution === id)!;
   const kent = by("kent");
@@ -60,11 +70,12 @@ function educationAnswer(): Scripted {
     [`Talha is in the final year of a ${kent.qualification} at ${institutions.kent.short}, finishing in ${monthYear(kent.expectedEnd!)}`, "education"],
     [`Before IT he studied ${swin.field} at ${institutions.swinburne.short} (${swin.start}–${swin.end}) and completed the first year of ${brac.field} at ${institutions.bracu.short}`, "education"],
     [`He also holds ${institutions[c.institution].short}'s ${c.name}`, "certifications"],
+    [`He is also a registered NCTS licensee, holding ${list(licences.map((l) => `the ${l.name}`))}`, "licences"],
   ]);
 }
 
 const skillTemplates: Record<string, (v: string) => string> = {
-  "Health IT": (v) => `Talha works in health IT, with ${csv(v)}`,
+  "Health IT": (v) => `Talha works in health IT, with ${csv(v)}, and is a registered NCTS licensee`,
   Software: (v) => `For software he uses ${csv(v)}`,
   "AI and automation": (v) => `On the AI side he works with ${csv(v)}`,
   "Cloud and testing": (v) => `For cloud and testing he uses ${csv(v)}`,
@@ -87,6 +98,7 @@ export function scriptedAnswer(question: string): Scripted | null {
   const named = mentioned(q);
   if (named.length === 1) return project(named[0]);
   if (named.length > 1) return pack("projects", named.map(intro));
+  if (has(q, /\b(licen[cs]\w*|ncts|affiliate|national terminology|terminology service|nts)\b/)) return licencesAnswer();
   if (has(q, /\b(projects?|portfolio|apps?|built|build|made|created)\b/))
     return pack("projects", [[`Talha has built ${words[projects.length] ?? projects.length} full-stack apps: ${list(projects.map((p) => p.name))}`, "summary"], ...projects.map(intro)]);
 
@@ -97,6 +109,7 @@ export function scriptedAnswer(question: string): Scripted | null {
       [`Talha has worked with FHIR and HL7 v2 mainly through ${cliniq.name}, ${lowerFirst(cliniq.summary)}`, `projects.${cliniq.slug}`],
       [`Its ${r.measure} found ${r.result} (${r.note})`, `projects.${cliniq.slug}`],
       [`His health IT skills include ${csv(glance("Health IT"))}`, "skills"],
+      [`He is also a registered NCTS licensee, holding ${list(licences.map((l) => `the ${l.name}`))}`, "licences"],
     ]);
   }
 
@@ -119,7 +132,7 @@ export function scriptedAnswer(question: string): Scripted | null {
   if (has(q, /\b(education|degrees?|stud\w*|universit\w*|uni|kent|swinburne|brac|stanford|qualifications?|bachelor|certifications?|certificate|school)\b/)) return educationAnswer();
 
   if (has(q, /\b(skills?|stack|technolog\w*|programming|typescript|python|react|sql|tools?|frameworks?|proficient)\b/))
-    return pack("skills", atAGlance.map((g) => [(skillTemplates[g.label] ?? ((v: string) => `${g.label}: ${csv(v)}`))(g.value), "skills"] as [string, string]));
+    return pack("skills", atAGlance.map((g) => [(skillTemplates[g.label] ?? ((v: string) => `${g.label}: ${csv(v)}`))(g.value), g.label === "Health IT" ? ["skills", "licences"] : "skills"] as [string, string | string[]]));
 
   if (has(q, /\b(experience|work history|jobs?|employment|employers?|worked|career|annotat\w*|crown|kfc)\b/)) return experienceAnswer();
 

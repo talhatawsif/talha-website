@@ -58,7 +58,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/talha-tawsif",
   github: "https://github.com/talhatawsif",
   email: "talhatawsif.dev@gmail.com",
-  /** International format, used for tel: links. Shown with spaces; kept off the CV by design. */
+  /** International format, used for tel: links; show it with formatPhone(). */
   phone: "+61499390833",
   cvUrl: "/cv.pdf",
   photo: "/talha.jpg",
@@ -66,7 +66,7 @@ export const profile = {
 
 export const summary = [
   "I build software that moves clinical data safely between systems. Before IT, I studied biomedical engineering at Swinburne University of Technology and electrical and electronic engineering at BRAC University, and I completed Stanford Medicine's AI in Healthcare Specialisation. So I come to health software already knowing the anatomy, the imaging and the clinical data behind it.",
-  "I've designed and shipped three full-stack apps. The main one, ClinIQ, converts HL7 v2 pathology messages into FHIR, codes clinical notes to SNOMED CT-AU with a clinician review step, and validates 20 synthetic patients against AU Core with 0 errors. PawLift matches volunteer drivers' existing trips with rescue animals that need a lift, keeps private addresses and medical notes visible only to the confirmed driver, and passes 223 of 223 database security tests. I also evaluate AI model responses for accuracy and safety as a freelance AI data annotator.",
+  "I've designed and shipped three full-stack apps. The main one, ClinIQ, converts HL7 v2 pathology messages into FHIR, codes clinical notes to SNOMED CT-AU with a clinician review step, and validates 20 synthetic patients against AU Core with 0 errors. PawLift matches volunteer drivers' existing trips with rescue animals that need a lift, keeps private addresses and medical notes visible only to the confirmed driver, and passes 223 of 223 database security tests. I'm a registered NCTS licensee (SNOMED CT and Australian National Terminology licences) and confirmed ClinIQ's licensing directly with NCTS before integrating Australian clinical terminology. I also evaluate AI model responses for accuracy and safety as a freelance AI data annotator.",
   "Alongside full-time study I've held a job since 2022, and I've trained new staff in every role. I'm reliable, I learn fast, and I finish what I start.",
 ];
 
@@ -384,6 +384,24 @@ export const certifications = [
   },
 ];
 
+const monthShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** "2026-11-19" -> "Nov 2026" */
+export const monthYear = (iso: string) => `${monthShort[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
+/** "+61499390833" -> "+61 499 390 833" */
+export const formatPhone = (p: string) => p.replace(/^(\+61)(\d{3})(\d{3})(\d{3})$/, "$1 $2 $3 $4");
+
+/** Licences, not certifications. The single source for the site, CV, FHIR view and assistant. No logos, no client IDs. */
+export const licences = [
+  { name: "SNOMED CT Affiliate Licence", issuer: "SNOMED International, via NCTS", accepted: "2026-11-19" },
+  { name: "Australian National Terminology Licence", issuer: "Australian Digital Health Agency, NCTS", accepted: "2026-11-19" },
+];
+
+/** "Registered for", not "integrated with": ClinIQ's NTS integration is not live yet. */
+export const licenceContext = {
+  registered: "registered NCTS individual licensee with an NTS API client for ClinIQ",
+  confirmed: "confirmed eligibility and public-demo licensing conditions in writing with NCTS",
+};
+
 export const skills = [
   { group: "Health IT", items: ["FHIR R4", "AU Core", "AU Patient Summary", "HL7 v2", "SMART on FHIR", "CDS Hooks", "SNOMED CT-AU", "LOINC", "clinical NLP (medspaCy)"] },
   {
@@ -423,4 +441,4 @@ export function collectTodos(value: unknown, path = "site"): string[] {
   return [];
 }
 
-export const allContent = { siteUrl, profile, summary, atAGlance, projects, experience, education, certifications, skills, contact };
+export const allContent = { siteUrl, profile, summary, atAGlance, projects, experience, education, certifications, licences, licenceContext, skills, contact };

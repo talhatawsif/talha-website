@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { validIds } from "@/lib/assistant/context";
 import { scriptedAnswer } from "@/lib/assistant/scripted";
-import { atAGlance, education, experience, profile, projects } from "@/content/site";
+import { atAGlance, education, experience, licenceContext, licences, profile, projects } from "@/content/site";
 
 const intent = (q: string) => scriptedAnswer(q)?.intent;
 
@@ -28,6 +28,10 @@ describe("scripted answers: intents and phrasings", () => {
     ["What are his skills?", "skills"],
     ["What tech stack does he use?", "skills"],
     ["Does he know Python?", "skills"],
+    ["Does he have a SNOMED licence?", "licences"],
+    ["Is he an NCTS licensee?", "licences"],
+    ["What licences does he hold?", "licences"],
+    ["Tell me about the Australian National Terminology Licence", "licences"],
     ["Does he have FHIR experience?", "fhir"],
     ["Tell me about his HL7 work", "fhir"],
     ["What is his work experience?", "experience"],
@@ -50,7 +54,7 @@ describe("scripted answers: intents and phrasings", () => {
 });
 
 describe("scripted answers: content", () => {
-  const qs = ["What is ClinIQ?", "What is PawLift?", "What is ADHD Buddy?", "What projects has he built?", "education", "skills", "FHIR experience", "work experience", "availability", "contact"];
+  const qs = ["Does he have an NCTS licence?", "What is ClinIQ?", "What is PawLift?", "What is ADHD Buddy?", "What projects has he built?", "education", "skills", "FHIR experience", "work experience", "availability", "contact"];
 
   it.each(qs)("%s: 2–4 sentences, every one cited with a valid section id", (q) => {
     const a = scriptedAnswer(q)!;
@@ -65,7 +69,8 @@ describe("scripted answers: content", () => {
     expect(scriptedAnswer("education")!.text).toBe(
       "Talha is in the final year of a Bachelor of Information Technology at Kent Institute Australia, finishing in June 2027 [education]. " +
         "Before IT he studied biomedical engineering at Swinburne University of Technology (2022–2024) and completed the first year of electrical and electronic engineering at BRAC University [education]. " +
-        "He also holds Stanford Medicine's AI in Healthcare Specialisation [certifications].",
+        "He also holds Stanford Medicine's AI in Healthcare Specialisation [certifications]. " +
+        "He is also a registered NCTS licensee, holding the SNOMED CT Affiliate Licence and the Australian National Terminology Licence [licences].",
     );
   });
 
@@ -75,7 +80,7 @@ describe("scripted answers: content", () => {
     expect(t("What is PawLift?")).toContain("It is built with Next.js, TypeScript, Supabase, PostgreSQL, PostGIS, MapLibre and Playwright [projects.pawlift].");
     expect(t("What is PawLift?")).toContain(`There is a live demo at ${projects[1].liveUrl} [projects.pawlift].`);
     expect(t("what has he built").startsWith("Talha has built three full-stack apps: ClinIQ, PawLift and ADHD Buddy [summary].")).toBe(true);
-    expect(t("skills")).toContain(`Talha works in health IT, with FHIR R4, HL7 v2, SNOMED CT-AU, AU Core, SMART on FHIR and CDS Hooks [skills].`);
+    expect(t("skills")).toContain(`Talha works in health IT, with FHIR R4, HL7 v2, SNOMED CT-AU, AU Core, SMART on FHIR and CDS Hooks, and is a registered NCTS licensee [skills] [licences].`);
     expect(t("FHIR experience")).toContain("mainly through ClinIQ, a demo electronic health record");
     expect(t("FHIR experience")).toContain("Its AU Core 2.0.0 validation found 0 errors (20 synthetic patients) [projects.cliniq].");
     expect(t("work experience")).toContain(`He currently works as an ${experience[0].role},`);
@@ -98,5 +103,25 @@ describe("scripted answers: content", () => {
 
   it("answers about all three projects when asked what he built", () => {
     expect(scriptedAnswer("what has he built")!.citations).toEqual(["summary", "projects.cliniq", "projects.pawlift", "projects.adhd-buddy"]);
+  });
+});
+
+describe("licences intent", () => {
+  const a = scriptedAnswer("Does he have a SNOMED licence?")!;
+
+  it("answers from the licences list, cited [licences]", () => {
+    expect(a.citations).toEqual(["licences"]);
+    for (const l of licences) expect(a.text).toContain(l.name);
+    expect(a.text).toContain("accepted Nov 2026");
+    expect(a.text).toContain("registered with an NTS API client for ClinIQ");
+    expect(a.text).toContain(licenceContext.confirmed);
+  });
+  it("credentials, skills and FHIR answers mention the licences", () => {
+    for (const q of ["education", "skills", "FHIR experience"]) expect(scriptedAnswer(q)!.citations).toContain("licences");
+  });
+  it("keeps the wording rules: licences not certifications, registered not integrated, no secrets", () => {
+    const all = [a.text, scriptedAnswer("education")!.text, scriptedAnswer("skills")!.text, scriptedAnswer("fhir")!.text].join(" ");
+    expect(all).not.toMatch(/certified|integrated with|client[ _-]?id|secret/i);
+    expect(JSON.stringify([licences, licenceContext])).not.toMatch(/certif|integrated with|client[ _-]?id|secret/i);
   });
 });

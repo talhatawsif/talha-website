@@ -1,5 +1,5 @@
 import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
-import { certifications, cv, education, experience, profile, projects, skills } from "../content/site";
+import { certifications, cv, education, experience, formatPhone, licenceContext, licences, monthYear, profile, projects, skills } from "../content/site";
 import { og } from "./og-tokens";
 
 Font.registerHyphenationCallback((w) => [w]); // no mid-word breaks, ATS-friendly
@@ -34,7 +34,7 @@ const Bullets = ({ items }: { items: string[] }) => (
 );
 
 /** An entry never splits across pages; a section heading stays with its first entry. */
-const Entry = ({ title, date, sub, bullets, heading }: { title: string; date?: string; sub?: string; bullets?: string[]; heading?: string }) => (
+const Entry = ({ title, date, sub, bullets, heading, after }: { title: string; date?: string; sub?: string; bullets?: string[]; heading?: string; after?: React.ReactNode }) => (
   <View wrap={false} style={s.entry}>
     {heading && <Text style={s.heading}>{heading}</Text>}
     <View style={s.row}>
@@ -43,12 +43,13 @@ const Entry = ({ title, date, sub, bullets, heading }: { title: string; date?: s
     </View>
     {sub && <Text style={s.sub}>{sub}</Text>}
     {bullets && <Bullets items={bullets} />}
+    {after}
   </View>
 );
 
 export function CvDocument() {
   const site = process.env.NEXT_PUBLIC_SITE_URL;
-  const contact = [profile.location.replace(", Australia", "").replace("Victoria", "VIC"), profile.email, strip(profile.linkedin), strip(profile.github), site && strip(site)].filter(Boolean).join(" · ");
+  const contact = [profile.location.replace(", Australia", "").replace("Victoria", "VIC"), profile.email, formatPhone(profile.phone), strip(profile.linkedin), strip(profile.github), site && strip(site)].filter(Boolean).join(" · ");
   const cert = certifications[0];
   return (
     <Document title={`${profile.name} CV`} author={profile.name} language="en-AU">
@@ -75,7 +76,14 @@ export function CvDocument() {
           <Entry key={e.qualification} heading={i === 0 ? "Education" : undefined} title={`${e.qualification}, ${e.institutionLabel}`} date={e.dates} bullets={[e.notes]} />
         ))}
 
-        <Entry heading="Certification" title={`${cert.name}, ${cert.issuer}`} date={cert.date} bullets={[`Five courses: ${cert.courses.join("; ")}. ${cert.credits} credits.`]} />
+        <Entry heading="Certification and licences" title={`${cert.name}, ${cert.issuer}`} date={cert.date} bullets={[`Five courses: ${cert.courses.join("; ")}. ${cert.credits} credits.`]}
+          after={
+            <Text style={{ marginTop: 3 }}>
+              <Text style={{ fontFamily: "Helvetica-Bold" }}>Licences: </Text>
+              {licences.map((l) => `${l.name} (${l.issuer}), accepted ${monthYear(l.accepted)}`).join("; ")}. {licenceContext.registered.charAt(0).toUpperCase() + licenceContext.registered.slice(1)}.
+            </Text>
+          }
+        />
 
         <View wrap={false}>
           <Text style={s.heading}>Skills</Text>

@@ -1,4 +1,4 @@
-import { certifications, education, institutions, languageCodes, profile } from "@/content/site";
+import { certifications, education, institutions, languageCodes, licences, profile } from "@/content/site";
 
 /** FHIR R4 Practitioner built from site.ts, standard elements only. */
 export function buildPractitioner() {
@@ -27,6 +27,8 @@ export function buildPractitioner() {
         period: { end: c.issued },
         issuer: { display: institutions[c.institution].name },
       })),
+      // R4 Practitioner.qualification covers licences as well as degrees.
+      ...licences.map((l) => ({ code: { text: l.name }, period: { start: l.accepted }, issuer: { display: l.issuer } })),
     ],
     communication: languageCodes.map(([code, text]) => ({ coding: [{ system: "urn:ietf:bcp:47", code, display: text }], text })),
   };

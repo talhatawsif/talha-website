@@ -158,10 +158,17 @@ test("banner shows the phone as text and contact buttons each have a logo", asyn
   await expect(page.locator("#contact").getByRole("link", { name: "Call me" })).toHaveAttribute("href", "tel:+61499390833");
 });
 
-test("the CV never carries the phone number", async ({ request }) => {
-  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  const doc = await getDocument({ data: new Uint8Array(await (await request.get("/cv.pdf")).body()), useSystemFonts: true }).promise;
-  let text = "";
-  for (let i = 1; i <= doc.numPages; i++) text += (await (await doc.getPage(i)).getTextContent()).items.map((it) => ("str" in it ? it.str : "")).join(" ");
-  expect(text).not.toMatch(/499\s?390\s?833/);
+test("licences appear next to the Stanford certificate, without logos, and in the JSON-LD", async ({ page }) => {
+  await page.goto("/");
+  const group = page.locator("#licences");
+  await expect(group.getByRole("heading", { name: "Licences" })).toBeVisible();
+  await expect(group).toContainText("SNOMED CT Affiliate Licence");
+  await expect(group).toContainText("SNOMED International, via NCTS, accepted Nov 2026");
+  await expect(group).toContainText("Australian Digital Health Agency, NCTS, accepted Nov 2026");
+  await expect(group).toContainText("NTS API client for ClinIQ");
+  await expect(group.locator("img, svg")).toHaveCount(0);
+  await expect(page.locator("#summary")).toContainText("registered NCTS licensee");
+  const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
+  expect(ld).toContain("EducationalOccupationalCredential");
+  expect(ld).toContain("Australian National Terminology Licence");
 });

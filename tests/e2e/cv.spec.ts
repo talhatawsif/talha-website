@@ -14,7 +14,12 @@ test("/cv.pdf is an inline PDF, 1–2 pages, with selectable text", async ({ req
   let text = "";
   for (let i = 1; i <= doc.numPages; i++) text += (await (await doc.getPage(i)).getTextContent()).items.map((it) => ("str" in it ? it.str : "")).join(" ") + "\n";
   for (const needle of [profile.name, profile.email, ...projects.map((p) => p.name)]) expect(text).toContain(needle);
-  expect(text).not.toMatch(/\+?\d[\d ()-]{8,}\d/); // no phone number
+  expect(text).toContain("+61 499 390 833");
+  expect(text).toContain("Licences:");
+  expect(text).toContain("SNOMED CT Affiliate Licence (SNOMED International, via NCTS), accepted Nov 2026");
+  expect(text).toContain("Australian National Terminology Licence (Australian Digital Health Agency, NCTS), accepted Nov 2026");
+  expect(text).toContain("Registered NCTS individual licensee with an NTS API client for ClinIQ");
+  expect(text).not.toMatch(/certified|client id|client secret/i);
 });
 
 test("old CV path redirects to /cv.pdf", async ({ request }) => {
