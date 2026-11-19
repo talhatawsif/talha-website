@@ -41,6 +41,8 @@ export const institutions: Record<InstitutionId, { name: string; initials: strin
   stanford: { name: "Stanford University School of Medicine", initials: "SM", logo: "/logos/stanford.jpg", ratio: 2400 / 778 },
 };
 
+export const languageCodes = [["en", "English"], ["bn", "Bengali"], ["hi", "Hindi"], ["ur", "Urdu"]] as const;
+
 export const profile = {
   name: "Talha Tawsif",
   role: "Software developer · Health tech and integration",
@@ -303,6 +305,8 @@ export const education: {
   qualification: string;
   institution: InstitutionId;
   institutionLabel: string;
+  start: string;
+  end?: string;
   notes: string;
 }[] = [
   {
@@ -310,6 +314,7 @@ export const education: {
     qualification: "Bachelor of Information Technology",
     institution: "kent",
     institutionLabel: "Kent Institute Australia, Melbourne",
+    start: "2025-03",
     notes:
       "Software Engineering, Systems Analysis & Design, Database Fundamentals, Object-Oriented Design and Programming, Web Page Design and Development, Data Communication and Networking, Cloud and Beyond, Data Structures & Algorithms. Capstone project in Trimester 1 2027.",
   },
@@ -318,6 +323,8 @@ export const education: {
     qualification: "Bachelor of Engineering (Honours), Biomedical — studied before transferring to IT",
     institution: "swinburne",
     institutionLabel: "Swinburne University of Technology",
+    start: "2022",
+    end: "2024",
     notes:
       "Medical Imaging Systems, Anatomy & Physiology, Engineering Materials, Circuits & Electronics, Calculus, Linear Algebra, Mathematical Methods & Statistics, Introduction to Programming.",
   },
@@ -326,6 +333,8 @@ export const education: {
     qualification: "Bachelor of Science in Electrical and Electronic Engineering (BSEEE) — first year completed",
     institution: "bracu",
     institutionLabel: "BRAC University, Dhaka",
+    start: "2021",
+    end: "2022",
     notes: "[TODO: first-year units from transcript]",
   },
 ];
@@ -336,6 +345,7 @@ export const certifications = [
     issuer: "Stanford University School of Medicine (online)",
     institution: "stanford" as InstitutionId,
     date: "Aug 2026",
+    issued: "2026-08",
     courses: [
       "Introduction to Healthcare",
       "Introduction to Clinical Data",

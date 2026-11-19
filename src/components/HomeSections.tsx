@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { Download, Mail } from "lucide-react";
 import { atAGlance, certifications, claudeNote, contact, education, experience, profile, projects, skills, summary } from "@/content/site";
 import { hasCv } from "@/lib/cv";
@@ -36,12 +37,12 @@ export function ProjectsSection() {
       <ul className="divide-y divide-border border-y border-border">
         {projects.map((p) => (
           <li key={p.slug} className="grid gap-4 py-4 md:grid-cols-[240px_1fr]">
-            <Link href={`/projects/${p.slug}`} aria-label={`${p.name} case study`} tabIndex={-1}>
+            <Link href={`/projects/${p.slug}`} aria-label={`${p.name} case study`} tabIndex={-1} className="print:hidden">
               <ProjectThumb project={p} />
             </Link>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-base font-semibold" style={{ viewTransitionName: `title-${p.slug}` }}>{p.name}</h3>
+                <ViewTransition name={`title-${p.slug}`} share="morph" default="none"><h3 className="text-base font-semibold">{p.name}</h3></ViewTransition>
                 <ProjectStatus slug={p.slug} />
               </div>
               <p className="text-sm text-text-muted">{p.tagline}</p>

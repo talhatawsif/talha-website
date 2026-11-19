@@ -144,3 +144,53 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+/* View transitions: soft morph between a project row and its case study header. */
+::view-transition-group(.morph) {
+  animation-duration: 240ms;
+  animation-timing-function: ease-out;
+}
+
+/* Reveal: sections fade and rise 8 px as they enter. Needs scroll-driven animations; otherwise static. */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 25%;
+    }
+  }
+}
+
+dialog[open]:not([aria-label="Command palette"]) {
+  animation: drawer-in 180ms ease-out;
+}
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Print as a one-to-two-page CV: black on white, no chrome, links as URLs. */
+@media print {
+  :root,
+  :root[data-theme],
+  :root:not([data-theme="light"]) {
+    --bg: #fff; --surface: #fff; --sunken: #fff; --border: #999; --border-strong: #666;
+    --text: #000; --text-muted: #333; --accent: #000; --on-accent: #000;
+    --success: #000; --success-bg: #fff; --machine: #000; --machine-bg: #fff; --warning: #000; --warning-bg: #fff;
+  }
+  body { font-size: 11pt; }
+  .reveal { animation: none !important; }
+  a[href^="http"]::after,
+  a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 9pt; word-break: break-all; }
+  a[href^="mailto:"]::after { content: " (" attr(href) ")"; }
+  section { break-inside: avoid-page; }
+  tr { break-inside: avoid; }
+}
+@media print {
+  a { border: 0 !important; padding: 0 !important; background: none !important; }
+}

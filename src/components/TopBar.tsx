@@ -3,6 +3,10 @@ import { Download } from "lucide-react";
 import { profile } from "@/content/site";
 import { hasCv } from "@/lib/cv";
 import { LinkButton } from "./Button";
+import { CommandPalette } from "./CommandPalette";
+import { MobileMenu } from "./MobileMenu";
+import { NavLinks } from "./NavLinks";
+import { ThemeToggle } from "./theme";
 
 export const navItems = [
   ["Projects", "/#projects"],
@@ -17,29 +21,28 @@ const linkCls = "inline-block rounded-sm px-2 py-1 text-sm text-text no-underlin
 export function TopBar() {
   const cv = hasCv();
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface">
+    <header className="sticky top-0 z-40 border-b border-border bg-surface print:hidden">
       <div className="mx-auto flex h-12 max-w-page items-center justify-between gap-3 px-4 md:px-6">
         <Link href="/" className="inline-block py-1 font-semibold text-text no-underline">{profile.name}</Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-          {navItems.map(([label, href]) => (
-            <a key={href} href={href} className={linkCls}>{label}</a>
-          ))}
+          <NavLinks items={navItems} />
         </nav>
         <div className="flex items-center gap-2">
+          <CommandPalette hasCv={cv} />
+          <ThemeToggle />
           {cv && (
             <LinkButton href={profile.cvUrl} variant="primary" download>
               <Download size={16} strokeWidth={1.5} aria-hidden="true" />
               Download CV
             </LinkButton>
           )}
-          <details className="relative md:hidden">
-            <summary className="cursor-pointer rounded-sm border border-border-strong px-3 py-1.5 text-sm">Menu</summary>
+          <MobileMenu>
             <nav aria-label="Main (menu)" className="absolute right-0 mt-1 flex w-44 flex-col border border-border bg-surface p-1 shadow-overlay">
               {navItems.map(([label, href]) => (
                 <a key={href} href={href} className={linkCls}>{label}</a>
               ))}
             </nav>
-          </details>
+          </MobileMenu>
         </div>
       </div>
     </header>

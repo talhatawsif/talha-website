@@ -1,10 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ViewTransition } from "react";
 import { projects, type Project } from "@/content/site";
 import { LinkButton } from "./Button";
 import { DataTable } from "./DataTable";
 import { ProjectStatus } from "./ProjectStatus";
 import { Chips, MachineNote, Txt } from "./Section";
+import { ProjectThumb } from "./ProjectThumb";
 import { Hl7Explainer } from "./Hl7Explainer";
 
 function P({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
@@ -45,8 +47,13 @@ export function CaseStudy({ project: p }: { project: Project }) {
       <header className="border-b border-border bg-surface">
         <div className="mx-auto max-w-page px-4 py-5 md:px-6">
           <p className="text-sm"><Link href="/#projects">All projects</Link></p>
-          <h1 className="mt-1 text-xl font-semibold" style={{ viewTransitionName: `title-${p.slug}` }}>{p.name}</h1>
-          <p className="text-text-muted">{p.tagline}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-4">
+            <div className="w-40"><ProjectThumb project={p} /></div>
+            <div>
+              <ViewTransition name={`title-${p.slug}`} share="morph" default="none"><h1 className="text-xl font-semibold">{p.name}</h1></ViewTransition>
+              <p className="text-text-muted">{p.tagline}</p>
+            </div>
+          </div>
           <div className="mt-2 flex flex-wrap items-center gap-2"><ProjectStatus slug={p.slug} /><Chips items={p.tags} /></div>
           <div className="mt-3 flex flex-wrap gap-2">
             <LinkButton href={p.liveUrl} variant="primary" newTab>Live demo</LinkButton>
