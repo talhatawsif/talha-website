@@ -50,7 +50,7 @@ test("status chips are in the server-rendered HTML", async ({ request }) => {
 test("no TODO placeholders in production output", async ({ request }) => {
   for (const path of ["/", "/projects/cliniq", "/projects/pawlift", "/projects/adhd-buddy"]) expect(await (await request.get(path)).text()).not.toContain("[TODO");
   const html = await (await request.get("/")).text();
-  expect(html).toContain("View credential");
+  expect(html).toContain("View transcript");
 });
 
 test("tables: real column headers, phone labels are not in the cell text", async ({ page }) => {

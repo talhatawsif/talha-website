@@ -75,6 +75,7 @@ export function CommandPalette() {
           <Command.Group heading="Links" className="text-xs text-text-muted [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1">
             <Command.Item value="LinkedIn" className={itemCls} onSelect={() => run(() => { location.href = profile.linkedin; })}>LinkedIn</Command.Item>
             <Command.Item value="GitHub" className={itemCls} onSelect={() => run(() => { location.href = profile.github; })}>GitHub</Command.Item>
+            <Command.Item value="View transcript Stanford Medicine" className={itemCls} onSelect={() => run(() => { if (location.pathname === "/") setTimeout(() => window.dispatchEvent(new Event("open-transcript")), 50); else router.push("/#transcript"); })}>View transcript</Command.Item>
             <Command.Item value="Email" className={itemCls} onSelect={() => run(() => { location.href = `mailto:${profile.email}`; })}>Email</Command.Item>
             <Command.Item value="Download CV" className={itemCls} onSelect={() => run(() => { location.href = profile.cvUrl; })}>Download CV</Command.Item>
           </Command.Group>

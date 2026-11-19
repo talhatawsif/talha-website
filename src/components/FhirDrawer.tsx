@@ -2,6 +2,7 @@
 
 import { Check, Copy, X } from "lucide-react";
 import { Fragment, useRef, useState } from "react";
+import { trapTab } from "@/lib/trap-tab";
 
 const token = /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?)/g;
 
@@ -36,6 +37,7 @@ export function FhirDrawer({ json }: { json: string }) {
       <dialog
         ref={ref}
         aria-label="Profile as a FHIR Practitioner resource"
+        onKeyDown={trapTab}
         onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}
         className="fixed inset-y-0 left-auto right-0 m-0 h-full max-h-none w-[min(560px,100vw)] max-w-none border-l border-border bg-surface p-0 text-text shadow-overlay backdrop:bg-text/30"
       >

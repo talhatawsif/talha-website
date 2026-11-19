@@ -364,6 +364,7 @@ export const certifications = [
     institution: "stanford" as InstitutionId,
     date: "Aug 2026",
     issued: "2026-08",
+    credits: 54.5,
     courses: [
       "Introduction to Healthcare",
       "Introduction to Clinical Data",
@@ -371,7 +372,6 @@ export const certifications = [
       "Evaluations of AI Applications in Healthcare",
       "AI in Healthcare Capstone Project",
     ],
-    credentialUrl: "https://www.coursera.org/account/accomplishments/specialization/VBZ041SX2YIC",
   },
 ];
 

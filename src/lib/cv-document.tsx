@@ -75,7 +75,7 @@ export function CvDocument() {
           <Entry key={e.qualification} heading={i === 0 ? "Education" : undefined} title={`${e.qualification}, ${e.institutionLabel}`} date={e.dates} bullets={[e.notes]} />
         ))}
 
-        <Entry heading="Certification" title={`${cert.name}, ${cert.issuer}`} date={cert.date} bullets={[`Five courses: ${cert.courses.join("; ")}.`]} />
+        <Entry heading="Certification" title={`${cert.name}, ${cert.issuer}`} date={cert.date} bullets={[`Five courses: ${cert.courses.join("; ")}. ${cert.credits} credits.`]} />
 
         <View wrap={false}>
           <Text style={s.heading}>Skills</Text>
